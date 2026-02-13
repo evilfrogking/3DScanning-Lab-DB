@@ -6,7 +6,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-const PORT = 8872;
+// Switch between ports for testing
+// const ASPEN_PORT = 3825;
+// const PORT = ASPEN_PORT;
+const ALEX_PORT = 8872;
+const PORT = ALEX_PORT;
 
 // Database
 const db = require('./database/db-connector');
@@ -49,6 +53,47 @@ app.get('/3DScans', async function (req, res) {
         const [artifacts] = await db.query(query4);
 
         res.render('3DScans', { scans: scans, techs: techs, pocs: pocs, artifacts: artifacts });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+// Creates the functionality for the Artifacts page
+app.get('/Artifacts', async function (req, res) {
+    try {
+        // Create and execute our queries
+        const query1 = `SELECT Artifacts.artifactID, Artifacts.pocID, Artifacts.onSite, Artifacts.institutionalID, Artifacts.location, \
+            Artifacts.ipHolder, Artifacts.license, Artifacts.classification, Artifacts.cultural, Artifacts.archaeology FROM Artifacts \
+            LEFT JOIN PointsOfContact ON Artifacts.pocID = PointsOfContact.pocID;`;
+        const query2 = 'SELECT * FROM PointsOfContact;';
+        
+        const [artifacts] = await db.query(query1);
+        const [pocs] = await db.query(query2);
+
+        // Render the Artifacts.hbs file, and also send the renderer
+        //  an object that contains our POC information
+        res.render('Artifacts', { artifacts: artifacts, pocs: pocs });
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
+});
+
+// Creates the functionality for the Technicians page
+app.get('/Technicians', async function (req, res) {
+    try {
+        // Create and execute our queries
+        const query1 = `SELECT Technicians.techID, Technicians.techFName, Technicians.techLName, Technicians.techEmail, Technicians.techPhone FROM Technicians;`;
+        const [technicians] = await db.query(query1);
+
+        res.render('Technicians', { technicians: technicians });
     } catch (error) {
         console.error('Error executing queries:', error);
         // Send a generic error message to the browser
