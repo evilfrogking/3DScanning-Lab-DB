@@ -33,6 +33,31 @@
     </tbody>
 </table>
 
+{{! CREATE form }}
+<h2>Register a Contact Point</h2>
+<form class='cuForm' id='create_scanpoc_form'>
+
+    <label for='create_scanpoc_POC'>Contact Point: </label>
+    <select name='create_scanpoc_POC' id='create_scanpoc_POC'>
+        <option value='NULL' selected>Select a Point of Contact</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each pocs}}
+        <option value='{{this.pocID}}' required>{{this.pocEmail}}</option>
+        {{/each}}
+    </select>
+
+    <label for='create_scanpoc_3DScan'>Scan: </label>
+    <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan'>
+        <option value='NULL' selected>Select a Scan</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each scans}}
+        <option value='{{this.scanID}}' required>{{this.fileName}}</option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>
+
 {{! UPDATE form }}
 <h2>Update a ScanPOC</h2>
 <form class='cuForm' id='update_scanPOC_form'>
