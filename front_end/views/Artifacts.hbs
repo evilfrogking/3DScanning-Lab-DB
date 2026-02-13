@@ -1,0 +1,36 @@
+<h1>Artifacts</h1>
+{{! CITATION needed}}
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! For the table header row, we print the DB attribute names }}
+        <tr>
+            {{#each artifacts.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the id, fname, lname, homeworld and age }}
+        {{#each artifacts}}
+        <tr>
+            <td>{{this.artifactID}}</td>
+            <td>{{this.pocID}}</td>
+            <td>{{this.onSite}}</td>
+            <td>{{this.institutionalID}}</td>
+            <td>{{this.location}}</td>
+            <td>{{this.ipHolder}}</td>
+            <td>{{this.license}}</td>
+            <td>{{this.classification}}</td>
+            <td>{{this.cultural}}</td>
+            <td>{{this.archaeology}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+
+</table>
