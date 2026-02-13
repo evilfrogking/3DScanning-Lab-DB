@@ -29,3 +29,12 @@ SELECT ScanPOCs.scanPOCID, 3DScans.fileName AS 'scanID',
     PointsOfContact.pocEmail AS 'pocID' FROM ScanPOCs 
     LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID 
     LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;
+
+-- get the ScanPOCIDs, the scan file names, and the POC emails to populate the ScanPOC dropdown
+SELECT ScanPOC.scanPOCID, ScanPOC.scanID, ScanPOC.pocID FROM ScanPOC;
+
+-- get the Scan ID and the scan file names to populate the Scan dropdown
+SELECT 3DScans.scanID, 3DScans.filename FROM 3DScans;
+
+-- get the POC ID, first names, last names and the POC emails to populate the POC dropdown
+SELECT PointsOfContact.pocID, PointsOfContact.pocFName, PointsOfContact.pocLName, PointsOfContact.pocEmail FROM PointsOfContact;
