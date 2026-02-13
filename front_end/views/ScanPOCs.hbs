@@ -1,5 +1,3 @@
-<h1>Scan Points of Contact List</h1>
-
 {{! READ table }}
 <table>
     <thead>
@@ -21,6 +19,14 @@
             <td>{{this.scanPOCID}}</td>
             <td>{{this.scanID}}</td>
             <td>{{this.pocID}}</td>
+
+            {{! DELETE form }}
+            <form id="delete_scanPOC_form">
+                <input type="hidden" name="delete_scanPOC_id" value="{{this.scanPOCID}}" />
+                <td>
+                    <input type="submit" value="Delete" />
+                </td>
+            </form>
         </tr>
         {{/each}}
     </tbody>
