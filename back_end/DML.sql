@@ -18,6 +18,8 @@ SELECT Artifacts.artifactID, Artifacts.pocID, Artifacts.onSite,
     Artifacts.cultural, Artifacts.archaeology 
     FROM Artifacts 
     LEFT JOIN PointsOfContact ON Artifacts.pocID = PointsOfContact.pocID;
+-- get PointsOfContact information for Artifacts
+SELECT * FROM PointsOfContact;
 
 -- get all Technician information
 SELECT Technicians.techID, Technicians.techFName, Technicians.techLName, 
@@ -38,3 +40,4 @@ SELECT 3DScans.scanID, 3DScans.filename FROM 3DScans;
 
 -- get the POC ID, first names, last names and the POC emails to populate the POC dropdown
 SELECT PointsOfContact.pocID, PointsOfContact.pocFName, PointsOfContact.pocLName, PointsOfContact.pocEmail FROM PointsOfContact;
+
