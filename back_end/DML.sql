@@ -32,6 +32,11 @@ SELECT ScanPOCs.scanPOCID, 3DScans.fileName AS 'scanID',
     LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID 
     LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;
 
+-- INSERT ScanPOCs
+-- associate a 3DScan with a Point of Contact (M-to-M relationship addition)
+INSERT INTO ScanPOCs (ScanPOC.scanID, ScanPOC.pocID) VALUES
+(:scanIDInput, :pocIDInput)
+
 -- UPDATE ScanPOCS 
 -- get the ScanPOCIDs, the scan file names, and the POC emails to populate the ScanPOC dropdown
 SELECT ScanPOC.scanPOCID, ScanPOC.scanID, ScanPOC.pocID FROM ScanPOC;
@@ -48,6 +53,7 @@ UPDATE ScanPOCs SET ScanPOC.scanID = :scanIDInput, ScanPOC.pocID= :pocIDInput
 DELETE FROM ScanPOCs WHERE 3DScans.pocID
 = :poc_ID_selected_from_3DScans_and_PointsOfContact_list AND 3DScans.scanID
 = :scan_ID_selected_from_3DScans_and_PointsOfContact_list;
+
 
 
 
