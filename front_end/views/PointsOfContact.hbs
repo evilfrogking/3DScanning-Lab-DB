@@ -1,0 +1,31 @@
+<h1>Points of Contact List</h1>
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! For the table header row, we print the DB attribute names }}
+        <tr>
+            {{#each contacts.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the id, fname, lname, homeworld and age }}
+        {{#each contacts}}
+        <tr>
+            <td>{{this.pocID}}</td>
+            <td>{{this.pocFName}}</td>
+            <td>{{this.pocLName}}</td>
+            <td>{{this.pocEmail}}</td>
+            <td>{{this.pocPhone}}</td>
+            <td>{{this.pocInstitution}}</td>
+            <td>{{this.active}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

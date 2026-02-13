@@ -1,0 +1,27 @@
+<h1>Scan Points of Contact List</h1>
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! For the table header row, we print the DB attribute names }}
+        <tr>
+            {{#each scancontacts.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the id, fname, lname, homeworld and age }}
+        {{#each scancontacts}}
+        <tr>
+            <td>{{this.scanPOCID}}</td>
+            <td>{{this.scanID}}</td>
+            <td>{{this.pocID}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
