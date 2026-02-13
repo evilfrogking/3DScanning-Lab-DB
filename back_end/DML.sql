@@ -41,3 +41,8 @@ SELECT 3DScans.scanID, 3DScans.filename FROM 3DScans;
 -- get the POC ID, first names, last names and the POC emails to populate the POC dropdown
 SELECT PointsOfContact.pocID, PointsOfContact.pocFName, PointsOfContact.pocLName, PointsOfContact.pocEmail FROM PointsOfContact;
 
+-- update ScanPOCs data based on submission of the Update a ScanPOC form
+UPDATE ScanPOCs SET ScanPOC.scanID = :scanIDInput, ScanPOC.pocID= :pocIDInput
+    WHERE ScanPOCID= :scanPOCIDInput
+
+
