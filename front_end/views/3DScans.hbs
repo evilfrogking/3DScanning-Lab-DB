@@ -32,35 +32,3 @@
         {{/each}}
     </tbody>
 </table>
-
-{{! UPDATE form }}
-<h2>Update a Scan</h2>
-<form class='cuForm' id='update_scan_form'>
-    <label for='update_scan_id'>Scan to Update: </label>
-    <select name='update_scan_id' id='update_scan_id' required>
-        <option value='' disabled selected>Select a Scan</option>
-        {{#each scans}}
-        <option value='{{this.scanID}}' required>
-            {{this.scanID}}
-            -
-            {{this.fileName}}
-        </option>
-        {{/each}}
-    </select>
-
-    <label for='update_scan_tech'>Technician: </label>
-    <select name='update_scan_tech' id='update_scan_tech'>
-        <option value='NULL' disabled selected>Select a Technician</option>
-        <option value='NULL'>&lt; None &gt;</option>
-        {{#each techs}}
-        <option value='{{this.techID}}' required>
-            {{this.techFName}} 
-            {{this.techLName}}
-            -
-            {{this.techEmail}}
-        </option>
-        {{/each}}
-    </select>
-
-    <input type='submit' />
-</form>
