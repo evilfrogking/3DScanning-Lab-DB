@@ -1,0 +1,29 @@
+<h1>Points of Contact List</h1>
+
+{{! READ table }}
+<table>
+    <thead>
+        {{! For the table header row, we print the DB attribute names }}
+        <tr>
+            {{#each technicians.[0]}}
+            <th>
+                {{@key}}
+            </th>
+            {{/each}}
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{! For each row, print the id, fname, lname, homeworld and age }}
+        {{#each technicians}}
+        <tr>
+            <td>{{this.techID}}</td>
+            <td>{{this.techFName}}</td>
+            <td>{{this.techLName}}</td>
+            <td>{{this.techEmail}}</td>
+            <td>{{this.techPhone}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
