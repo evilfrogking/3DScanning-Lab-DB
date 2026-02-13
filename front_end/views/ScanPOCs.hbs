@@ -25,3 +25,49 @@
         {{/each}}
     </tbody>
 </table>
+
+{{! UPDATE form }}
+<h2>Update a ScanPOC</h2>
+<form class='cuForm' id='update_scanPOC_form'>
+    <label for='update_scanPOC_id'>ScanPOC to Update: </label>
+    <select name='update_scanPOC_id' id='update_scanPOC_id' required>
+        <option value='' disabled selected>Select a ScanPOC</option>
+        {{#each scancontacts}}
+        <option value='{{this.scanPOCID}}' required>
+            {{this.scanPOCID}}
+            -
+            {{this.scanID}}
+            {{this.pocID}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_scan_ID'>Scan: </label>
+    <select name='update_scan_ID' id='update_scan_ID'>
+        <option value='NULL' disabled selected>Select a Scan</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each scans}}
+        <option value='{{this.scanID}}' required>
+            {{this.scanID}}
+            -
+            {{this.fileName}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_poc_ID'>POC: </label>
+    <select name='update_poc_ID' id='update_poc_ID'>
+        <option value='NULL' disabled selected>Select a POC</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each pocs}}
+        <option value='{{this.pocID}}' required>
+            {{this.pocFName}}
+            {{this.pocLName}}
+            -
+            {{this.pocEmail}}
+        </option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>
