@@ -4,7 +4,7 @@
 -- READ 3DScans list
 SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', 
     Artifacts.artifactID AS 'Artifact ID', Technicians.techEmail AS 'Technician Contact', 
-    PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'UNITS', 3DScans.scanMethod AS 'Scan Method', 
+    PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'Units', 3DScans.scanMethod AS 'Scan Method', 
     3DScans.derived FROM 3DScans 
     LEFT JOIN Artifacts ON 3DScans.artifactID = Artifacts.artifactID 
     LEFT JOIN Technicians ON 3DScans.techID = Technicians.techID 
@@ -78,6 +78,7 @@ UPDATE ScanPOCs SET scanID = :scanIDInput, pocID= :pocIDInput
 DELETE FROM ScanPOCs 
 WHERE pocID = :deletePOCIDInput 
 AND scanID = :deleteScanIDInput;
+
 
 
 
