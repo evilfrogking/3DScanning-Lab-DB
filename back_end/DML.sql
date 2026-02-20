@@ -75,9 +75,10 @@ UPDATE ScanPOCs SET scanID = :scanIDInput, pocID= :pocIDInput
 
 -- DELETE ScanPOCs
 -- Dis-associate a Point of Contact from a 3DScan (M-to-M relationship deletion)
+-- The ID to be deleted will be sent to the database connector via the delete button
 DELETE FROM ScanPOCs 
-WHERE pocID = :deletePOCIDInput 
-AND scanID = :deleteScanIDInput;
+WHERE scanPOCID = :scanPOCIDInput;
+
 
 
 
