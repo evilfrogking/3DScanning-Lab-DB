@@ -1,5 +1,7 @@
 <h1>Points of Contact List</h1>
-
+<div class="Description">
+<p>Records details of the individual curators receiving or curating the 3D scans.</p>
+</div>
 {{! READ table }}
 <table>
     <thead>
@@ -17,12 +19,11 @@
         {{! For each row, print the id, fname, lname, homeworld and age }}
         {{#each contacts}}
         <tr>
-            <td>{{this.pocID}}</td>
-            <td>{{this.pocFName}}</td>
-            <td>{{this.pocLName}}</td>
-            <td>{{this.pocEmail}}</td>
-            <td>{{this.pocPhone}}</td>
-            <td>{{this.pocInstitution}}</td>
+            <td>{{this.ID}}</td>
+            <td>{{this.[Contact Name]}}</td>
+            <td>{{this.Email}}</td>
+            <td>{{this.[Phone Number]}}</td>
+            <td>{{this.Institution}}</td>
             <td>{{this.active}}</td>
         </tr>
         {{/each}}

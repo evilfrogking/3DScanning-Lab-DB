@@ -1,4 +1,9 @@
-<h1>Scan Points of Contact List</h1>
+<h1>Scan'douts List</h1>
+<div class="Description">
+<p>The intersection table between Points Of Contact and 3D Scans to highlight the M:M relationship between them.<br> 
+Specifically regarding the points of contact after the lab point of contact involving the 3d scans, where someone can<br>
+request a 3D scan file as a loan. These are also called scan handouts, or: scan'douts!</p>
+</div>
 {{! READ table }}
 <table>
     <thead>
@@ -17,9 +22,9 @@
         {{! For each row, print the id, fname, lname, homeworld and age }}
         {{#each scancontacts}}
         <tr>
-            <td>{{this.scanPOCID}}</td>
-            <td>{{this.scanID}}</td>
-            <td>{{this.pocID}}</td>
+            <td>{{this.ID}}</td>
+            <td>{{this.[Scan File]}}</td>
+            <td>{{this.[Contact Email]}}</td>
 
             {{! DELETE form }}
             <form id="delete_scanPOC_form">
@@ -34,7 +39,7 @@
 </table>
 
 {{! CREATE form }}
-<h2>Register a Contact Point</h2>
+<h2>Register a Scan'dout</h2>
 <form class='cuForm' id='create_scanpoc_form'>
 
     <label for='create_scanpoc_POC'>Contact Point: </label>
@@ -59,17 +64,18 @@
 </form>
 
 {{! UPDATE form }}
-<h2>Update a ScanPOC</h2>
+<h2>Update a Scan'dout</h2>
 <form class='cuForm' id='update_scanPOC_form'>
-    <label for='update_scanPOC_id'>ScanPOC to Update: </label>
+    <label for='update_scanPOC_id'>Scan'dout to Update: </label>
     <select name='update_scanPOC_id' id='update_scanPOC_id' required>
-        <option value='' disabled selected>Select a ScanPOC</option>
+        <option value='' disabled selected>Select a Scan'dout</option>
         {{#each scancontacts}}
-        <option value='{{this.scanPOCID}}' required>
-            {{this.scanPOCID}}
+        <option value='{{this.ID}}' required>
+            {{this.ID}}
             -
-            {{this.scanID}}
-            {{this.pocID}}
+            {{this.[Scan File]}}
+             - loaned to - 
+            {{this.[Contact Email]}}
         </option>
         {{/each}}
     </select>
