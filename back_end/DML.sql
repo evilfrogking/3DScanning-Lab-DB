@@ -1,58 +1,83 @@
--- get the 3DScans information
-SELECT 3DScans.scanID, 3DScans.scanDate, 3DScans.fileName, 
-    Artifacts.artifactID AS 'artifactID', Technicians.techEmail AS 'techID', 
-    PointsOfContact.pocEmail AS 'labPOCID', 3DScans.units, 3DScans.scanMethod, 
+-- -----------------------------------------------------------
+-- 3D SCANS
+-- -----------------------------------------------------------
+-- READ 3DScans list
+SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', 
+    Artifacts.artifactID AS 'Artifact ID', Technicians.techEmail AS 'Technician Contact', 
+    PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'UNITS', 3DScans.scanMethod AS 'Scan Method', 
     3DScans.derived FROM 3DScans 
     LEFT JOIN Artifacts ON 3DScans.artifactID = Artifacts.artifactID 
     LEFT JOIN Technicians ON 3DScans.techID = Technicians.techID 
     LEFT JOIN PointsOfContact ON 3DScans.labPOCID = PointsOfContact.pocID;
+-- SELECT Technicians information for 3DScans LEFT JOIN
+SELECT * FROM Technicians;
+-- SELECT PointsOfContact information for 3DScans LEFT JOIN
+SELECT * FROM PointsOfContact;
+-- SELECT Artifacts information for 3DScans LEFT JOIN
+SELECT * FROM Artifacts;
 
--- get the Point of contact information
-SELECT pocID, pocFName, pocLName, pocEmail, pocPhone, 
-        pocInstitution, active FROM PointsOfContact;
-
--- get all Artifact information
-SELECT Artifacts.artifactID, Artifacts.pocID, Artifacts.onSite, 
-    Artifacts.institutionalID, Artifacts.location, 
-    Artifacts.ipHolder, Artifacts.license, Artifacts.classification, 
-    Artifacts.cultural, Artifacts.archaeology 
+-- -----------------------------------------------------------
+-- ARTIFACTS
+-- -----------------------------------------------------------
+-- READ Artifacts list
+SELECT Artifacts.artifactID AS 'ID', Artifacts.pocID AS 'Contact Email', Artifacts.onSite AS 'On Site', 
+    Artifacts.institutionalID AS 'Institutional ID', Artifacts.location AS 'Location', 
+    Artifacts.ipHolder AS 'IP Holder', Artifacts.license AS 'License', Artifacts.classification AS 'Classification', 
+    Artifacts.cultural AS 'Cultural', Artifacts.archaeology AS 'Archaeology' 
     FROM Artifacts 
     LEFT JOIN PointsOfContact ON Artifacts.pocID = PointsOfContact.pocID;
--- get PointsOfContact information for Artifacts
+-- SELECT PointsOfContact information for Artifacts LEFT JOIN
 SELECT * FROM PointsOfContact;
 
--- get all Technician information
-SELECT Technicians.techID, Technicians.techFName, Technicians.techLName, 
-    Technicians.techEmail, Technicians.techPhone 
-    FROM Technicians;
+-- -----------------------------------------------------------
+-- TECHNICIANS
+-- -----------------------------------------------------------
+-- READ Technicians list
+SELECT techID AS 'ID', CONCAT(techFName, ' ', techLName) AS 'Technician Name', 
+    techEmail AS 'Email', techPhone AS 'Phone Number' FROM Technicians;
 
--- get all the Scan points of contact information
-SELECT ScanPOCs.scanPOCID, 3DScans.fileName AS 'scanID', 
-    PointsOfContact.pocEmail AS 'pocID' FROM ScanPOCs 
+-- -----------------------------------------------------------
+-- POINTS OF CONTACT
+-- -----------------------------------------------------------
+-- READ Points of Contact list
+SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) as 'Contact Name', 
+    pocEmail AS 'Email', pocPhone AS 'Phone Number', 
+    pocInstitution AS 'Institution', active FROM PointsOfContact;
+
+-- -----------------------------------------------------------
+-- SCAN POINTS OF CONTACT
+-- -----------------------------------------------------------
+-- READ the Scan points of contact information
+SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'Scan File', 
+    PointsOfContact.pocEmail AS 'Contact Email' FROM ScanPOCs 
     LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID 
     LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;
+-- SELECT 3DScans information for ScanPOCs LEFT JOIN
+SELECT * FROM 3DScans;
+-- SELECT PointsOfContact information for ScanPOCs LEFT JOIN
+SELECT * FROM PointsOfContact;
 
 -- INSERT ScanPOCs
--- associate a 3DScan with a Point of Contact (M-to-M relationship addition)
-INSERT INTO ScanPOCs (ScanPOC.scanID, ScanPOC.pocID) VALUES
-(:scanIDInput, :pocIDInput)
+-- Associate a 3DScan with a Point of Contact (M-to-M relationship addition)
+INSERT INTO ScanPOCs (pocID, scanID) VALUES
+(:pocIDInput, :scanIDInput);
 
 -- UPDATE ScanPOCS 
--- get the ScanPOCIDs, the scan file names, and the POC emails to populate the ScanPOC dropdown
-SELECT ScanPOC.scanPOCID, ScanPOC.scanID, ScanPOC.pocID FROM ScanPOC;
--- get the Scan ID and the scan file names to populate the Scan dropdown
-SELECT 3DScans.scanID, 3DScans.filename FROM 3DScans;
--- get the POC ID, first names, last names and the POC emails to populate the POC dropdown
-SELECT PointsOfContact.pocID, PointsOfContact.pocFName, PointsOfContact.pocLName, PointsOfContact.pocEmail FROM PointsOfContact;
--- update ScanPOCs data based on submission of the Update a ScanPOC form
-UPDATE ScanPOCs SET ScanPOC.scanID = :scanIDInput, ScanPOC.pocID= :pocIDInput
-    WHERE ScanPOCID= :scanPOCIDInput
+-- READ the ScanPOCIDs, the scan file names, and the POC emails to populate the ScanPOCs dropdown
+SELECT scanPOCID, scanID, pocID FROM ScanPOCs;
+-- READ the Scan ID and the scan file names to populate the Scan dropdown
+SELECT scanID, fileName FROM 3DScans;
+-- READ the POC ID, first names, last names and the POC emails to populate the POC dropdown
+SELECT pocID, pocFName, pocLName, pocEmail FROM PointsOfContact;
+-- UPDATE ScanPOCs data based on submission of the Update a ScanPOCs form
+UPDATE ScanPOCs SET scanID = :scanIDInput, pocID= :pocIDInput 
+    WHERE ScanPOCID= :scanPOCIDInput;
 
 -- DELETE ScanPOCs
--- dis-associate a Point of Contact from a 3DScan (M-to-M relationship deletion)
-DELETE FROM ScanPOCs WHERE 3DScans.pocID
-= :poc_ID_selected_from_3DScans_and_PointsOfContact_list AND 3DScans.scanID
-= :scan_ID_selected_from_3DScans_and_PointsOfContact_list;
+-- Dis-associate a Point of Contact from a 3DScan (M-to-M relationship deletion)
+DELETE FROM ScanPOCs 
+WHERE pocID = :deletePOCIDInput 
+AND scanID = :deleteScanIDInput;
 
 
 
