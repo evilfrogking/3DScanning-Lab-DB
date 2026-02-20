@@ -27,7 +27,6 @@ CREATE TABLE PointsOfContact (
     pocInstitution VARCHAR(101) NOT NULL
 );
 
--- We need to add a unique identifier for ArtifactID as a foreign key. We will do that during the final project process.
 CREATE TABLE Artifacts (
     artifactID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
     pocID  INT(11) NOT NULL,
