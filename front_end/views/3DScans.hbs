@@ -1,5 +1,7 @@
 <h1>3D Scans</h1>
-
+<div class="Description">
+<p>Records the details of the 3D scans, including all potentially relevant research information.</p>
+</div>
 {{! READ table }}
 <table>
     <thead>
@@ -17,14 +19,14 @@
         {{! For each row, print the id, fname, lname, homeworld and age }}
         {{#each scans}}
         <tr>
-            <td>{{this.scanID}}</td>
-            <td>{{this.scanDate}}</td>
-            <td>{{this.fileName}}</td>
-            <td>{{this.artifactID}}</td>
-            <td>{{this.techID}}</td>
-            <td>{{this.labPOCID}}</td>
-            <td>{{this.units}}</td>
-            <td>{{this.scanMethod}}</td>
+            <td>{{this.ID}}</td>
+            <td>{{this.[Scan Date]}}</td>
+            <td>{{this.[File Name]}}</td>
+            <td>{{this.[Artifact ID]}}</td>
+            <td>{{this.[Technician Contact]}}</td>
+            <td>{{this.[Lab Contact]}}</td>
+            <td>{{this.Units}}</td>
+            <td>{{this.[Scan Method]}}</td>
             <td>{{this.derived}}</td>
            
         </tr>

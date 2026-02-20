@@ -1,5 +1,7 @@
 <h1>Technicians List</h1>
-
+<div class="Description">
+<p>Records the details of the technicians providing the 3D scans.</p>
+</div>
 {{! READ table }}
 <table>
     <thead>
@@ -17,11 +19,10 @@
         {{! For each row, print the id, fname, lname, homeworld and age }}
         {{#each technicians}}
         <tr>
-            <td>{{this.techID}}</td>
-            <td>{{this.techFName}}</td>
-            <td>{{this.techLName}}</td>
-            <td>{{this.techEmail}}</td>
-            <td>{{this.techPhone}}</td>
+            <td>{{this.ID}}</td>
+            <td>{{this.[Technician Name]}}</td>
+            <td>{{this.[Email]}}</td>
+            <td>{{this.[Phone Number]}}</td>
         </tr>
         {{/each}}
     </tbody>

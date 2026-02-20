@@ -1,6 +1,8 @@
 <h1>Artifacts</h1>
 {{! CITATION needed}}
-
+<div class="Description">
+<p>Records details of the physical objects that are 3D-scanned, including all potentially relevant research information.</p>
+</div>
 {{! READ table }}
 <table>
     <thead>
@@ -18,16 +20,16 @@
         {{! For each row, print the id, fname, lname, homeworld and age }}
         {{#each artifacts}}
         <tr>
-            <td>{{this.artifactID}}</td>
-            <td>{{this.pocID}}</td>
-            <td>{{this.onSite}}</td>
-            <td>{{this.institutionalID}}</td>
-            <td>{{this.location}}</td>
-            <td>{{this.ipHolder}}</td>
-            <td>{{this.license}}</td>
-            <td>{{this.classification}}</td>
-            <td>{{this.cultural}}</td>
-            <td>{{this.archaeology}}</td>
+            <td>{{this.ID}}</td>
+            <td>{{this.[Contact Email]}}</td>
+            <td>{{this.[On Site]}}</td>
+            <td>{{this.[Institutional ID]}}</td>
+            <td>{{this.Location}}</td>
+            <td>{{this.[IP Holder]}}</td>
+            <td>{{this.License}}</td>
+            <td>{{this.Classification}}</td>
+            <td>{{this.Cultural}}</td>
+            <td>{{this.Archaeological}}</td>
         </tr>
         {{/each}}
     </tbody>
