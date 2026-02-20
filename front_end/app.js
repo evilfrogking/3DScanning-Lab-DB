@@ -109,8 +109,8 @@ app.get('/Technicians', async function (req, res) {
 // PointsOfContact page functionality
 app.get('/PointsOfContact', async function (req, res) {
     try {
-        const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) as 'Contact Name', pocEmail as 'Email', pocPhone as 'Phone Number', \
-        pocInstitution as 'Institution', active FROM PointsOfContact;`;
+        const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) AS 'Contact Name', pocEmail AS 'Email', pocPhone AS 'Phone Number', \
+        pocInstitution AS 'Institution', active FROM PointsOfContact;`;
         const [contacts] = await db.query(query1);
         res.render('PointsOfContact', { contacts: contacts });
     } catch (error) {
