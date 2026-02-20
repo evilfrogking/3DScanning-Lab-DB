@@ -36,9 +36,9 @@ app.get('/', async function (req, res) {
 
 app.get('/3DScans', async function (req, res) {
     try {
-        const query1 = `SELECT 3DScans.scanID, 3DScans.scanDate, 3DScans.fileName, \
-            Artifacts.artifactID AS 'artifactID', Technicians.techEmail AS 'techID', \
-            PointsOfContact.pocEmail AS 'labPOCID', 3DScans.units, 3DScans.scanMethod, \
+        const query1 = `SELECT 3DScans.scanID AS 'ID', CAST(3DScans.scanDate AS DATE) AS 'Scan Date', 3DScans.fileName AS 'File Name', \
+            Artifacts.artifactID AS 'Artifact ID', Technicians.techEmail AS 'Technician Contact', \
+            PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'Units', 3DScans.scanMethod AS 'Scan Method', \
             3DScans.derived FROM 3DScans \
             LEFT JOIN Artifacts ON 3DScans.artifactID = Artifacts.artifactID \
             LEFT JOIN Technicians ON 3DScans.techID = Technicians.techID \
@@ -46,7 +46,6 @@ app.get('/3DScans', async function (req, res) {
         const query2 = 'SELECT * FROM Technicians;';
         const query3 = 'SELECT * FROM PointsOfContact;';
         const query4 = 'SELECT * FROM Artifacts;';
-        //const query2 = 'SELECT * FROM bsg_planets;';
         const [scans] = await db.query(query1);
         const [techs] = await db.query(query2);
         const [pocs] = await db.query(query3);
@@ -66,8 +65,10 @@ app.get('/3DScans', async function (req, res) {
 app.get('/Artifacts', async function (req, res) {
     try {
         // Create and execute our queries
-        const query1 = `SELECT Artifacts.artifactID, Artifacts.pocID, Artifacts.onSite, Artifacts.institutionalID, Artifacts.location, \
-            Artifacts.ipHolder, Artifacts.license, Artifacts.classification, Artifacts.cultural, Artifacts.archaeology FROM Artifacts \
+        const query1 = `SELECT Artifacts.artifactID AS 'ID', PointsOfContact.pocEmail AS 'Contact Email', Artifacts.onSite AS 'On Site', \
+            Artifacts.institutionalID AS 'Institutional ID', Artifacts.location AS 'Location', \
+            Artifacts.ipHolder AS 'IP Holder', Artifacts.license AS 'License', Artifacts.classification AS 'Classification', \
+            Artifacts.cultural AS 'Cultural', Artifacts.archaeology AS 'Archaeological' FROM Artifacts \
             LEFT JOIN PointsOfContact ON Artifacts.pocID = PointsOfContact.pocID;`;
         const query2 = 'SELECT * FROM PointsOfContact;';
         
@@ -90,7 +91,8 @@ app.get('/Artifacts', async function (req, res) {
 app.get('/Technicians', async function (req, res) {
     try {
         // Create and execute our queries
-        const query1 = `SELECT Technicians.techID, Technicians.techFName, Technicians.techLName, Technicians.techEmail, Technicians.techPhone FROM Technicians;`;
+        const query1 = `SELECT techID AS 'ID', CONCAT(techFName, ' ', techLName) AS 'Technician Name', \
+        techEmail AS 'Email', techPhone AS 'Phone Number' FROM Technicians;`;
         const [technicians] = await db.query(query1);
 
         res.render('Technicians', { technicians: technicians });
@@ -105,8 +107,8 @@ app.get('/Technicians', async function (req, res) {
 
 app.get('/PointsOfContact', async function (req, res) {
     try {
-        const query1 = `SELECT pocID, pocFName, pocLName, pocEmail, pocPhone, \
-        pocInstitution, active FROM PointsOfContact;`;
+        const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) as 'Contact Name', pocEmail as 'Email', pocPhone as 'Phone Number', \
+        pocInstitution as 'Institution', active FROM PointsOfContact;`;
         const [contacts] = await db.query(query1);
         res.render('PointsOfContact', { contacts: contacts });
     } catch (error) {
@@ -120,8 +122,8 @@ app.get('/PointsOfContact', async function (req, res) {
 
 app.get('/ScanPOCs', async function (req, res) {
     try {
-        const query1 = `SELECT ScanPOCs.scanPOCID, 3DScans.fileName AS 'scanID', \
-            PointsOfContact.pocEmail AS 'pocID' FROM ScanPOCs \
+        const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'Scan File', \
+            PointsOfContact.pocEmail AS 'Contact Email' FROM ScanPOCs \
             LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID \
             LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;`;
         const query2 = 'SELECT * FROM 3DScans;';
