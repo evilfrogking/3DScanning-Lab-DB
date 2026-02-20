@@ -36,7 +36,7 @@ app.get('/', async function (req, res) {
 
 app.get('/3DScans', async function (req, res) {
     try {
-        const query1 = `SELECT 3DScans.scanID AS 'ID', CAST(3DScans.scanDate AS DATE) AS 'Scan Date', 3DScans.fileName AS 'File Name', \
+        const query1 = `SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', \
             Artifacts.artifactID AS 'Artifact ID', Technicians.techEmail AS 'Technician Contact', \
             PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'Units', 3DScans.scanMethod AS 'Scan Method', \
             3DScans.derived FROM 3DScans \
