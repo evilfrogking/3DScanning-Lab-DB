@@ -40,6 +40,7 @@ app.get('/', async function (req, res) {
     }
 });
 
+// 3DScans page functionality
 app.get('/3DScans', async function (req, res) {
     try {
         const query1 = `SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', \
@@ -111,6 +112,7 @@ app.get('/Technicians', async function (req, res) {
     }
 });
 
+// PointsOfContact page functionality
 app.get('/PointsOfContact', async function (req, res) {
     try {
         const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) as 'Contact Name', pocEmail as 'Email', pocPhone as 'Phone Number', \
@@ -126,6 +128,7 @@ app.get('/PointsOfContact', async function (req, res) {
     }
 });
 
+// ScanPOCs page functionality
 app.get('/ScanPOCs', async function (req, res) {
     try {
         const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'Scan File', \
@@ -151,6 +154,7 @@ app.post('/Reset', async function (req, res) {
     try {
         const query1 = 'CALL sp_RestartDatabase();'
         await db.query(query1);
+        res.redirect('/');
     } catch (error) {
         console.error('Error executing queries:', error);
         res.status(500).send(
@@ -158,6 +162,7 @@ app.post('/Reset', async function (req, res) {
         );
     }
 });
+
 // ########################################
 // ########## LISTENER
 
