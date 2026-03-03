@@ -12,3 +12,4 @@ input, select { margin-bottom: 4px;margin-right: 12px;}
 nav {background-color: #cecece;padding: 16px;}
 a {margin-left: 16px;}
 .Description {margin-left: 32px;}
+#restart_database_button {margin-left: 16px;}

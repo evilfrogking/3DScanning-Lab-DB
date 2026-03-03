@@ -14,6 +14,10 @@
         <a href="/Technicians">Technicians</a>
         <a href="/PointsOfContact">Contacts</a>
         <a href="/ScanPOCs">Active Scan'douts</a>
+        {{! Consulted Copilot on some debugging. Made this a form because of that.}}
+        <form method='POST' action='/Reset'>
+            <button id='restart_database_button' action='submit'>Reset Database</button>
+        </form>
     </nav>
 
     {{{body}}}
