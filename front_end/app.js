@@ -1,4 +1,10 @@
-
+// Authors: Aspen Frazee and Alex Hinson
+// File name: app.js
+// Templates used: Yes, the template provided in "Web Application Technology" was used and followed for the app.get process
+// https://canvas.oregonstate.edu/courses/2031764/pages/exploration-web-application-technology-2?module_item_id=26243419
+// Additionally, the template in "Implementing CUD operations in your app" was used and followed for the app.post process
+// https://canvas.oregonstate.edu/courses/2031764/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=26243436
+// AI used: N/A
 // Express
 const express = require('express');
 const app = express();
@@ -34,7 +40,6 @@ app.get('/', async function (req, res) {
     }
 });
 
-// 3DScans page functionality
 app.get('/3DScans', async function (req, res) {
     try {
         const query1 = `SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', \
@@ -62,7 +67,7 @@ app.get('/3DScans', async function (req, res) {
     }
 });
 
-// Artifacts page functionality
+// Creates the functionality for the Artifacts page
 app.get('/Artifacts', async function (req, res) {
     try {
         // Create and execute our queries
@@ -88,7 +93,7 @@ app.get('/Artifacts', async function (req, res) {
     }
 });
 
-// Technicians page functionality
+// Creates the functionality for the Technicians page
 app.get('/Technicians', async function (req, res) {
     try {
         // Create and execute our queries
@@ -106,11 +111,10 @@ app.get('/Technicians', async function (req, res) {
     }
 });
 
-// PointsOfContact page functionality
 app.get('/PointsOfContact', async function (req, res) {
     try {
-        const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) AS 'Contact Name', pocEmail AS 'Email', pocPhone AS 'Phone Number', \
-        pocInstitution AS 'Institution', active FROM PointsOfContact;`;
+        const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) as 'Contact Name', pocEmail as 'Email', pocPhone as 'Phone Number', \
+        pocInstitution as 'Institution', active FROM PointsOfContact;`;
         const [contacts] = await db.query(query1);
         res.render('PointsOfContact', { contacts: contacts });
     } catch (error) {
@@ -122,7 +126,6 @@ app.get('/PointsOfContact', async function (req, res) {
     }
 });
 
-// ScanPOCs page functionality
 app.get('/ScanPOCs', async function (req, res) {
     try {
         const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'Scan File', \
@@ -143,9 +146,21 @@ app.get('/ScanPOCs', async function (req, res) {
         );
     }
 });
-// ########################################
 
+app.post('/Reset', async function (req, res) {
+    try {
+        const query1 = 'CALL sp_RestartDatabase();'
+        await db.query(query1);
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        res.status(500).send(
+            'An error occured while executing the database queries.'
+        );
+    }
+});
+// ########################################
 // ########## LISTENER
+
 app.listen(PORT, function () {
     console.log(
         'Express started on http://localhost:' +
