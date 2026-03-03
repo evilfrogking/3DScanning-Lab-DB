@@ -1,35 +1,102 @@
-<h1>3D Scans</h1>
-<div class="Description">
-<p>Records the details of the 3D scans, including all potentially relevant research information.</p>
-</div>
+
 {{! READ table }}
 <table>
-    <thead>
-        {{! For the table header row, we print the DB attribute names }}
-        <tr>
-            {{#each scans.[0]}}
-            <th>
-                {{@key}}
-            </th>
-            {{/each}}
-        </tr>
-    </thead>
-
-    <tbody>
-        {{! For each row, print the id, fname, lname, homeworld and age }}
-        {{#each scans}}
-        <tr>
-            <td>{{this.ID}}</td>
-            <td>{{this.[Scan Date]}}</td>
-            <td>{{this.[File Name]}}</td>
-            <td>{{this.[Artifact ID]}}</td>
-            <td>{{this.[Technician Contact]}}</td>
-            <td>{{this.[Lab Contact]}}</td>
-            <td>{{this.Units}}</td>
-            <td>{{this.[Scan Method]}}</td>
-            <td>{{this.derived}}</td>
-           
-        </tr>
+  <thead>
+    <tr>
+        {{#each scancontacts.[0]}}
+        <th>
+            {{@key}}
+        </th>
         {{/each}}
-    </tbody>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each scancontacts}}
+      <tr>
+        <td>{{this.ID}}</td>
+        <td>{{this.File}}</td>
+        <td>{{this.Contact}}</td>
+
+        <td>
+          <form method="POST" action="/DeleteScanPOC">
+            <input type="hidden" name="scanPOCID" value="{{this.ID}}">
+            <input type="submit" value="Delete">
+          </form>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>
+
+{{! CREATE form }}
+<h2>Register a Scan'dout</h2>
+<form class='cuForm' id='create_scanpoc_form'>
+
+    <label for='create_scanpoc_POC'>Contact Point: </label>
+    <select name='create_scanpoc_POC' id='create_scanpoc_POC'>
+        <option value='NULL' selected>Select a Point of Contact</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each pocs}}
+        <option value='{{this.pocID}}' required>{{this.pocEmail}}</option>
+        {{/each}}
+    </select>
+
+    <label for='create_scanpoc_3DScan'>Scan: </label>
+    <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan'>
+        <option value='NULL' selected>Select a Scan</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each scans}}
+        <option value='{{this.scanID}}' required>{{this.fileName}}</option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>
+
+{{! UPDATE form }}
+<h2>Update a Scan'dout</h2>
+<form class='cuForm' id='update_scanPOC_form'>
+    <label for='update_scanPOC_id'>Scan'dout to Update: </label>
+    <select name='update_scanPOC_id' id='update_scanPOC_id' required>
+        <option value='' disabled selected>Select a Scan'dout</option>
+        {{#each scancontacts}}
+        <option value='{{this.ID}}' required>
+            {{this.ID}}
+            -
+            {{this.[Scan File]}}
+             - loaned to - 
+            {{this.[Contact Email]}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_scan_ID'>Scan: </label>
+    <select name='update_scan_ID' id='update_scan_ID'>
+        <option value='NULL' disabled selected>Select a Scan</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each scans}}
+        <option value='{{this.scanID}}' required>
+            {{this.scanID}}
+            -
+            {{this.fileName}}
+        </option>
+        {{/each}}
+    </select>
+
+    <label for='update_poc_ID'>POC: </label>
+    <select name='update_poc_ID' id='update_poc_ID'>
+        <option value='NULL' disabled selected>Select a POC</option>
+        <option value='NULL'>&lt; None &gt;</option>
+        {{#each pocs}}
+        <option value='{{this.pocID}}' required>
+            {{this.pocFName}}
+            {{this.pocLName}}
+            -
+            {{this.pocEmail}}
+        </option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>
