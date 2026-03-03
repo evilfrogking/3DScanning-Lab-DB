@@ -13,10 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Switch between ports for testing
-// const ASPEN_PORT = 3825;
-// const PORT = ASPEN_PORT;
-const ALEX_PORT = 8872;
-const PORT = ALEX_PORT;
+const ASPEN_PORT = 3825;
+const PORT = ASPEN_PORT;
+// const ALEX_PORT = 8872;
+// const PORT = ALEX_PORT;
 
 // Database
 const db = require('./database/db-connector');
@@ -40,7 +40,6 @@ app.get('/', async function (req, res) {
     }
 });
 
-// 3DScans page functionality
 app.get('/3DScans', async function (req, res) {
     try {
         const query1 = `SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', \
@@ -128,11 +127,10 @@ app.get('/PointsOfContact', async function (req, res) {
     }
 });
 
-// ScanPOCs page functionality
 app.get('/ScanPOCs', async function (req, res) {
     try {
-        const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'Scan File', \
-            PointsOfContact.pocEmail AS 'Contact Email' FROM ScanPOCs \
+        const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'File', \
+            PointsOfContact.pocEmail AS 'Contact' FROM ScanPOCs \
             LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID \
             LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;`;
         const query2 = 'SELECT * FROM 3DScans;';
@@ -150,19 +148,52 @@ app.get('/ScanPOCs', async function (req, res) {
     }
 });
 
+
 app.post('/Reset', async function (req, res) {
-    try {
-        const query1 = 'CALL sp_RestartDatabase();'
-        await db.query(query1);
-        res.redirect('/');
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        res.status(500).send(
-            'An error occured while executing the database queries.'
-        );
-    }
+  try {
+    await db.query('CALL sp_RestartDatabase()');
+    return res.redirect(303, '/');  // ← end the request, force a GET
+  } catch (error) {
+    console.error('Error executing queries:', error);
+    return res.status(500).send('An error occurred while resetting the database.');
+  }
 });
 
+
+// Citation for use of AI Tools:
+// Date: 03/02/2026
+// Prompts used to generate PL/SQL
+// Edit my delete function to work with my stored procedure sp_delete_scanPOC.
+// into the following schema [movies db schema here] and returns the id of the newly inserted title. 
+// Write a test to verify the SP by inserting the title for the 2001 comedy movie Shrek.
+// AI Source URL: https://copilot.microsoft.com/
+
+app.post('/DeleteScanPOC', async function (req, res) {
+  try {
+    const scanPOCID = req.body.scanPOCID;
+
+    // Call the stored procedure (only one IN param)
+    const [resultSets] = await db.query('CALL sp_delete_scanPOC(?);', [scanPOCID]);
+
+    // mysql2 returns an array of result sets for CALL.
+    // Your proc does one SELECT at the end, so the message will be in resultSets[0][0].result_message
+    let msg = 'Error! Scan\'dout still in!';
+    if (Array.isArray(resultSets) && resultSets.length > 0 && resultSets[0]?.[0]?.result_message) {
+      msg = resultSets[0][0].result_message;
+    }
+
+    console.log('DeleteScanPOC:', msg);
+
+    // Option 1: redirect back to the list and optionally flash a message
+    res.redirect('/ScanPOCs');
+
+    // Option 2: if you want to show message inline without redirect, you could:
+    // res.status(200).send(msg);
+  } catch (error) {
+    console.error('Error executing queries:', error);
+    res.status(500).send('An error occured while executing the database queries.');
+  }
+});
 // ########################################
 // ########## LISTENER
 
