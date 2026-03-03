@@ -1,41 +1,32 @@
-<h1>Scan'douts List</h1>
-<div class="Description">
-<p>The intersection table between Points Of Contact and 3D Scans to highlight the M:M relationship between them.<br> 
-Specifically regarding the points of contact after the lab point of contact involving the 3d scans, where someone can<br>
-request a 3D scan file as a loan. These are also called scan handouts, or: scan'douts!</p>
-</div>
+
 {{! READ table }}
 <table>
-    <thead>
-        {{! For the table header row, we print the DB attribute names }}
-        <tr>
-            {{#each scancontacts.[0]}}
-            <th>
-                {{@key}}
-            </th>
-            {{/each}}
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        {{! For each row, print the id, fname, lname, homeworld and age }}
-        {{#each scancontacts}}
-        <tr>
-            <td>{{this.ID}}</td>
-            <td>{{this.[Scan File]}}</td>
-            <td>{{this.[Contact Email]}}</td>
-
-            {{! DELETE form }}
-            <form id="delete_scanPOC_form">
-                <input type="hidden" name="delete_scanPOC_id" value="{{this.scanPOCID}}" />
-                <td>
-                    <input type="submit" value="Delete" />
-                </td>
-            </form>
-        </tr>
+  <thead>
+    <tr>
+        {{#each scancontacts.[0]}}
+        <th>
+            {{@key}}
+        </th>
         {{/each}}
-    </tbody>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each scancontacts}}
+      <tr>
+        <td>{{this.ID}}</td>
+        <td>{{this.File}}</td>
+        <td>{{this.Contact}}</td>
+
+        <td>
+          <form method="POST" action="/DeleteScanPOC">
+            <input type="hidden" name="scanPOCID" value="{{this.ID}}">
+            <input type="submit" value="Delete">
+          </form>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
 </table>
 
 {{! CREATE form }}
