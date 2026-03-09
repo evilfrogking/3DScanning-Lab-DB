@@ -1,25 +1,59 @@
+/* 
+   File: plsql.sql
+   Purpose: Contains all of our Stored Procedures, including the one to restart the database and insert test data, and the one to delete a scanPOC.
+     - sp_RestartDatabase: drops all tables if they exist, creates all tables, and inserts test data.
+     - sp_delete_scanPOC: deletes a scanPOC by its PK, with error handling to prevent deletion if the scanPOC is still in use by a 3DScan.
+   Author: Aspen Frazee and Alexander Hinson
+   Created: 02-12-2026
+   Last Update: 03-09-2026
+   Notes:
+        Alex: There will be multiple points of contact made to stress the M:N relationship
+            between points of contact and 3D scans.
+            To show the 1:M relationship between points of contact and artifacts,
+            the entered points of contact will also be linked to up to 2 artifacts.
+            The first point of contact will be the technician used for the 
+            LabPOCID value or the required relationship between 3D scans and poc.
+            The second point of contact will be used for 1 3D scan and 1 artifact.
+            The third point of contact will be used for 0 3dscans and 2 artifacts.
+
+*/
+
+    -- ================
+    -- DROP DEFINITIONS
+    -- ================
+DROP PROCEDURE IF EXISTS sp_RestartDatabase;
+DROP PROCEDURE IF EXISTS sp_delete_scanPOC;
 DELIMITER //
-DROP PROCEDURE sp_RestartDatabase;
+/* 
+   Procedure: sp_RestartDatabase
+   Author: Alexander Hinson. Edited by Aspen Frazee.
+   Created: 02-12-2026
+   Behavior:
+     - Drops all tables if they exist, creates all tables, and inserts test data.
+*/
 CREATE PROCEDURE `sp_RestartDatabase`()
 BEGIN
     SET foreign_key_checks=0;
-    -- Removed auto_commit=0; after consulting copilot and also seeing that given ddl examples lacked that functionality
+    -- Removed auto_commit=0; after consulting copilot
+    -- and also seeing that the given ddl examples lacked that functionality
 
-    -- TABLE DEFINITIONS
-
-    -- CITATION:
+    /* 
+    CITATION:
     --  # Date: 2/12/2026
     --  # Prompts used to generate SQL
     --  # Find the purpose for the error message:
     --  # 1451 - Cannot delete or update a parent row: a foreign key constraint fails
     --  # AI Source URL: https://https://chatgpt.com/
+    */
     DROP TABLE IF EXISTS ScanPOCs;
     DROP TABLE IF EXISTS 3DScans;
     DROP TABLE IF EXISTS Artifacts;
     DROP TABLE IF EXISTS Technicians;
     DROP TABLE IF EXISTS PointsOfContact;
 
-
+    -- =================
+    -- TABLE DEFINITIONS
+    -- =================
     CREATE TABLE PointsOfContact (
         pocID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
         active BOOLEAN NOT NULL DEFAULT 1,
@@ -30,7 +64,6 @@ BEGIN
         pocInstitution VARCHAR(101) NOT NULL
     );
 
-    -- We need to add a unique identifier for ArtifactID as a foreign key. We will do that during the final project process.
     CREATE TABLE Artifacts (
         artifactID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
         pocID  INT(11) NOT NULL,
@@ -73,10 +106,7 @@ BEGIN
         ON DELETE RESTRICT ON UPDATE CASCADE
     );
 
-
-    -- Finally, creating the intersection table, though we decided that it would be better for it's own
-    -- incrementing PK rather than relying on the FKs.
-
+    -- M:M intersection table between PointsOfContact and 3DScans.
     CREATE TABLE ScanPOCs (
         scanPOCID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
         pocID INT(11) NOT NULL,
@@ -87,17 +117,13 @@ BEGIN
         ON DELETE CASCADE ON UPDATE CASCADE
     );
 
+    SET foreign_key_checks=1; -- Moved to after the drops by Copilot recommendation
 
-
+    -- ==================
     -- INSERT DEFINITIONS
-
-
-    -- There will be multiple points of contact made to stress the M:N relationship between points of contact and 3dscans.
-    -- To show the 1:M relationship between points of contact and artifacts, the entered points of contact will also be linked to up to 2 artifacts.
-    -- The first point of contact will be the technician used for the 
-    -- LabPOCID value or the required relationship between 3dscans and poc.
-    -- The second point of contact will be used for 1 3dscan and 1 artifact.
-    -- The third point of contact will be used for 0 3dscans and 2 artifacts.
+    -- ==================
+    START TRANSACTION; -- Copilot recommendation: "Put DML in a transaction; DDL has already committed"
+    
     INSERT INTO PointsOfContact (
         active,
         pocFName,
@@ -120,7 +146,7 @@ BEGIN
         'Jaime',
         'Lannister',
         'JLannister@houselannister.com',
-        '222-543-6789',
+        '222-543-6789'222-543-6789'222-543-6789'222-543-6789'222-543-6789'222-543-6789'222-543-6789'222-543-6789',
         'Kings Landing'
     ),
     (
@@ -132,7 +158,8 @@ BEGIN
         'Kings Landing'
     );
 
-    -- This poc will be used for 2 3dscans and no artifacts. no active boolean will be provided here to show the default value
+    -- This poc will be used for 2 3dscans and no artifacts.
+    -- No active boolean will be provided here to show the default value.
     INSERT INTO PointsOfContact (
         pocFName,
         pocLName,
@@ -151,7 +178,7 @@ BEGIN
 
 
 
-    -- Inserting enough artifacts to cover the examples of the 1:M relationship it has
+    -- Inserting enough artifacts to cover the examples of the 1:M relationship 
     -- between not only PoC but also with 3dScans.
 
     INSERT INTO Artifacts (
@@ -203,8 +230,9 @@ BEGIN
 
 
 
-    -- To show the 1:M relationship between technicians and 3dscans, there will be 3
-    -- test case technicians, each linked to a different amount of 3dscans.
+    -- To show the 1:M relationship between technicians and 3dscans, 
+    -- there will be 3 test case technicians, 
+    -- each linked to a different number of 3D scans.
     INSERT INTO Technicians (
         techFName,
         techLName,
@@ -234,11 +262,8 @@ BEGIN
         '111-233-3344'
     );
 
-
-    -- This was said earlier but will put again here for clarification.
-    -- We recognize that we have not thought of a way to select the ArtifactID as a foreign key besides hard coded numbers.
-    -- We will work on that for the final draft of part 2.
-    -- each 3dscan will demonstrate the different levels of the M:N relationship that 3DScans has with PointsOfContact
+    -- Each 3dscan will demonstrate the different levels of the M:N relationship 
+    -- that 3DScans has with PointsOfContact
     INSERT INTO 3DScans (
         artifactID,
         labPOCID,
@@ -278,7 +303,8 @@ BEGIN
     );
 
 
-    -- Inserting enough test data with the pocID and scanID FKs to showcase the M:N relationship between them.
+    -- Inserting enough test data with the pocID and scanID FKs 
+    -- to showcase the M:N relationship between them.
     INSERT INTO ScanPOCs (
         pocID,
         scanID
@@ -297,7 +323,52 @@ BEGIN
         (SELECT scanID FROM 3DScans WHERE fileName = 'vertebra_text.obj')
     );
 
-    SET foreign_key_checks=1;
     COMMIT;
 END //
+-- end sp_RestartDatabase
+
+/* 
+   Procedure: sp_delete_scanPOC
+   Author: Aspen Frazee. Edited by Alexander Hinson.
+   Created: 03-02-2026
+   Behavior:
+        Deletes a scanPOC by its PK, with error handling to prevent deletion
+        if the scanPOC is still in use by a 3DScan.
+    CITATION:
+        Date: 2/12/2026
+        Prompts used:
+            Write a stored procedure for MariaDB called sp_delete_scanPOC 
+            that deletes a scan point of contact (POC) from the ScanPOCs table 
+            based on the provided scanPOCID. 
+            The procedure should return a message indicating 
+            whether the deletion was successful or if there was an error 
+            (e.g., if the scanPOCID does not exist 
+            or if there are foreign key constraints preventing the deletion). 
+            Use appropriate error handling to manage exceptions 
+            and ensure that the database remains consistent.
+        AI Source URL: https://m365.cloud.microsoft/chat/
+*/
+CREATE PROCEDURE `sp_delete_scanPOC`(IN `p_scanPOCID` INT)
+BEGIN
+    DECLARE v_msg VARCHAR(64);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error! Scan''dout still in!' AS v_msg;
+    END;
+
+    START TRANSACTION;
+    DELETE FROM `ScanPOCs`
+    WHERE `scanPOCID` = p_scanPOCID;
+
+    IF ROW_COUNT() = 1 THEN
+        COMMIT;
+        SELECT 'Scan''dout out' AS v_msg;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error! Scan''dout still in!' AS v_msg;
+    END IF;
+END //
+-- end sp_delete_scanPOC
 DELIMITER ;
