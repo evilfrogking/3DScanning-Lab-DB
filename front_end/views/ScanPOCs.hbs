@@ -1,3 +1,9 @@
+<h1>Scan'douts List</h1>
+<div class="Description">
+<p>The intersection table between Points Of Contact and 3D Scans to highlight the M:M relationship between them.<br> 
+Specifically regarding the points of contact after the lab point of contact involving the 3d scans, where someone can<br>
+request a 3D scan file as a loan. These are also called scan handouts, or: scan'douts!</p>
+</div>
 
 {{! READ table }}
 <table>
@@ -31,21 +37,19 @@
 
 {{! CREATE form }}
 <h2>Register a Scan'dout</h2>
-<form class='cuForm' id='create_scanpoc_form'>
+<form class='cuForm' id='create_scanpoc_form' method="POST" action="/CreateScanPOC">
 
     <label for='create_scanpoc_POC'>Contact Point: </label>
-    <select name='create_scanpoc_POC' id='create_scanpoc_POC'>
-        <option value='NULL' selected>Select a Point of Contact</option>
-        <option value='NULL'>&lt; None &gt;</option>
+    <select name='create_scanpoc_POC' id='create_scanpoc_POC' required>
+        <option value='' disable selected>Select a Point of Contact</option>
         {{#each pocs}}
         <option value='{{this.pocID}}' required>{{this.pocEmail}}</option>
         {{/each}}
     </select>
 
     <label for='create_scanpoc_3DScan'>Scan: </label>
-    <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan'>
-        <option value='NULL' selected>Select a Scan</option>
-        <option value='NULL'>&lt; None &gt;</option>
+    <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan' required>
+        <option value='' disable selected>Select a Scan</option>
         {{#each scans}}
         <option value='{{this.scanID}}' required>{{this.fileName}}</option>
         {{/each}}

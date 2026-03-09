@@ -8,12 +8,14 @@
 <body>
     <nav>
         Navigation: 
-        <a href="/">Home</a>
-        <a href="/3DScans">3D Scans</a>
-        <a href="/Artifacts">Artifacts</a>
-        <a href="/Technicians">Technicians</a>
-        <a href="/PointsOfContact">Contacts</a>
-        <a href="/ScanPOCs">Active Scan'douts</a>
+        <div>
+            <a href="/">Home</a>
+            <a href="/3DScans">3D Scans</a>
+            <a href="/Artifacts">Artifacts</a>
+            <a href="/Technicians">Technicians</a>
+            <a href="/PointsOfContact">Contacts</a>
+            <a href="/ScanPOCs">Active Scan'douts</a>
+        </div>
         {{! Consulted Copilot on some debugging. Made this a form because of that.}}
         <form method='POST' action='/Reset'>
             <button id='restart_database_button' action='submit'>Reset Database</button>
