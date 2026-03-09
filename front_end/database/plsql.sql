@@ -1,10 +1,6 @@
--- #############################################
--- run the database DDL
--- #############################################
-DROP PROCEDURE IF EXISTS sp_RestartDatabase;
-
 DELIMITER //
-CREATE PROCEDURE sp_RestartDatabase()
+DROP PROCEDURE sp_RestartDatabase;
+CREATE PROCEDURE `sp_RestartDatabase`()
 BEGIN
     SET foreign_key_checks=0;
     -- Removed auto_commit=0; after consulting copilot and also seeing that given ddl examples lacked that functionality
