@@ -13,10 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Switch between ports for testing
-const ASPEN_PORT = 3825;
-const PORT = ASPEN_PORT;
-// const ALEX_PORT = 8872;
-// const PORT = ALEX_PORT;
+//const ASPEN_PORT = 3825;
+//const PORT = ASPEN_PORT;
+const ALEX_PORT = 8872;
+const PORT = ALEX_PORT;
 
 // Database
 const db = require('./database/db-connector');
@@ -193,6 +193,38 @@ app.post('/DeleteScanPOC', async function (req, res) {
     console.error('Error executing queries:', error);
     res.status(500).send('An error occured while executing the database queries.');
   }
+});
+
+// This functionality was provided as a template in the
+// "Implementing CUD operations in your app" exploration
+// CREATE ROUTES
+app.post('/CreateScanPOC', async function (req, res) {
+    try {
+        // Parse frontend form information
+        let data = req.body;
+
+        // Create and execute our queries
+        // Using parameterized queries (Prevents SQL injection attacks)
+        const query1 = `CALL sp_create_scanPOC(?, ?, @new_id);`;
+
+        // Store ID of last inserted row
+        const [[[rows]]] = await db.query(query1, [
+            data.create_scanpoc_3DScan,
+            data.create_scanpoc_POC]);
+
+        console.log(`CREATE Scan'dout. ID: ${rows.new_id} ` +
+            `Details: Contact:${data.create_scanpoc_POC} Scan:${data.create_scanpoc_3DScan}`
+        );
+
+        // Redirect the user to the updated webpage
+        res.redirect('/ScanPOCs');
+    } catch (error) {
+        console.error('Error executing queries:', error);
+        // Send a generic error message to the browser
+        res.status(500).send(
+            'An error occurred while executing the database queries.'
+        );
+    }
 });
 // ########################################
 // ########## LISTENER
