@@ -3,6 +3,7 @@
    Purpose: Contains all of our Stored Procedures, including the one to restart the database and insert test data, and the one to delete a scanPOC.
      - sp_RestartDatabase: drops all tables if they exist, creates all tables, and inserts test data.
      - sp_delete_scanPOC: deletes a scanPOC by its PK, with error handling to prevent deletion if the scanPOC is still in use by a 3DScan.
+     - sp_create_scanPOC: creates a scanPOC by its PK, with error handling to prevent creation if the scanPOC is already in use by a 3DScan.
    Author: Aspen Frazee and Alexander Hinson
    Created: 02-12-2026
    Last Update: 03-09-2026
@@ -18,13 +19,15 @@
 
 */
 
-    -- ================
-    -- DROP DEFINITIONS
-    -- ================
+-- ================
+-- DROP DEFINITIONS
+-- ================
 DROP PROCEDURE IF EXISTS sp_RestartDatabase;
 DROP PROCEDURE IF EXISTS sp_delete_scanPOC;
 DROP PROCEDURE IF EXISTS sp_create_scanPOC;
+
 DELIMITER //
+
 /* 
    Procedure: sp_RestartDatabase
    Author: Alexander Hinson. Edited by Aspen Frazee.
@@ -35,16 +38,14 @@ DELIMITER //
 CREATE PROCEDURE `sp_RestartDatabase`()
 BEGIN
     SET foreign_key_checks=0;
-    -- Removed auto_commit=0; after consulting copilot
-    -- and also seeing that the given ddl examples lacked that functionality
 
     /* 
     CITATION:
-    --  # Date: 2/12/2026
-    --  # Prompts used to generate SQL
-    --  # Find the purpose for the error message:
-    --  # 1451 - Cannot delete or update a parent row: a foreign key constraint fails
-    --  # AI Source URL: https://https://chatgpt.com/
+        Date: 2/12/2026
+        Prompts used to generate SQL
+        Find the purpose for the error message:
+        1451 - Cannot delete or update a parent row: a foreign key constraint fails
+        AI Source URL: https://https://chatgpt.com/
     */
     DROP TABLE IF EXISTS ScanPOCs;
     DROP TABLE IF EXISTS 3DScans;
@@ -124,7 +125,7 @@ BEGIN
     -- INSERT DEFINITIONS
     -- ==================
     START TRANSACTION; -- Copilot recommendation: "Put DML in a transaction; DDL has already committed"
-    
+
     INSERT INTO PointsOfContact (
         active,
         pocFName,
@@ -177,11 +178,8 @@ BEGIN
         'All around Westeros'
     );
 
-
-
     -- Inserting enough artifacts to cover the examples of the 1:M relationship 
     -- between not only PoC but also with 3dScans.
-
     INSERT INTO Artifacts (
         pocID,
         onSite,
@@ -227,9 +225,6 @@ BEGIN
         1,
         0
     );
-
-
-
 
     -- To show the 1:M relationship between technicians and 3dscans, 
     -- there will be 3 test case technicians, 
@@ -303,7 +298,6 @@ BEGIN
         'vertebra_no_text.obj'
     );
 
-
     -- Inserting enough test data with the pocID and scanID FKs 
     -- to showcase the M:N relationship between them.
     INSERT INTO ScanPOCs (
@@ -372,16 +366,19 @@ BEGIN
     END IF;
 END //
 -- end sp_delete_scanPOC
-DELIMITER ;
 
--- #############################
--- CREATE ScanPOC
--- #############################
-
--- This functionality is from a template that was provided in the
--- "Implementing CUD operations in your app" exploration.
-
-DELIMITER //
+/* 
+   Procedure: sp_create_scanPOC
+   Author: Alexander Hinson. Edited by Aspen Frazee.
+   Created: 03-09-2026
+   Behavior:
+        Creates a scanPOC by its PK, with error handling to prevent creation
+        if the scanPOC is already in use by a 3DScan.
+    CITATION:
+        Date: 3/9/2026
+        Source: This functionality is from a template that was provided in the
+            "Implementing CUD operations in your app" exploration.
+*/
 CREATE PROCEDURE sp_create_scanPOC(
     IN s_id INT, 
     IN c_id INT, 
@@ -396,4 +393,5 @@ BEGIN
     SELECT LAST_INSERT_ID() AS 'new_id';
 
 END //
+-- end sp_create_scanPOC
 DELIMITER ;
