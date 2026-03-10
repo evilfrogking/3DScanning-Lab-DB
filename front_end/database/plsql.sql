@@ -1,266 +1,423 @@
-// Authors: Aspen Frazee and Alex Hinson
-// File name: app.js
-// Templates used: Yes, the template provided in "Web Application Technology" was used and followed for the app.get process
-// https://canvas.oregonstate.edu/courses/2031764/pages/exploration-web-application-technology-2?module_item_id=26243419
-// Additionally, the template in "Implementing CUD operations in your app" was used and followed for the app.post process
-// https://canvas.oregonstate.edu/courses/2031764/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=26243436
-// AI used: N/A
-// Express
-const express = require('express');
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+/* 
+   File: plsql.sql
+   Purpose: Contains all of our Stored Procedures, including the one to restart the database and insert test data, and the one to delete a scanPOC.
+     - sp_RestartDatabase: drops all tables if they exist, creates all tables, and inserts test data.
+     - sp_delete_scanPOC: deletes a scanPOC by its PK, with error handling to prevent deletion if the scanPOC is still in use by a 3DScan.
+     - sp_create_scanPOC: creates a scanPOC by its PK, with error handling to prevent creation if the scanPOC is already in use by a 3DScan.
+   Author: Aspen Frazee and Alexander Hinson
+   Created: 02-12-2026
+   Last Update: 03-09-2026
+   Notes:
+        Alex: There will be multiple points of contact made to stress the M:N relationship
+            between points of contact and 3D scans.
+            To show the 1:M relationship between points of contact and artifacts,
+            the entered points of contact will also be linked to up to 2 artifacts.
+            The first point of contact will be the technician used for the 
+            LabPOCID value or the required relationship between 3D scans and poc.
+            The second point of contact will be used for 1 3D scan and 1 artifact.
+            The third point of contact will be used for 0 3dscans and 2 artifacts.
 
-// Switch between ports for testing
-const ASPEN_PORT = 3825;
-const PORT = ASPEN_PORT;
-// const ALEX_PORT = 8872;
-// const PORT = ALEX_PORT;
+*/
 
-// Database
-const db = require('./database/db-connector');
+-- ================
+-- DROP DEFINITIONS
+-- ================
+DROP PROCEDURE IF EXISTS sp_RestartDatabase;
+DROP PROCEDURE IF EXISTS sp_delete_scanPOC;
+DROP PROCEDURE IF EXISTS sp_create_scanPOC;
+DROP PROCEDURE IF EXISTS sp_update_scanPOC;
 
-// Handlebars
-const { engine } = require('express-handlebars'); // Import express-handlebars engine
-app.engine('.hbs', engine({ extname: '.hbs' })); // Create instance of handlebars
-app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files.
+DELIMITER //
 
-// ########################################
-// ########## ROUTE HANDLERS
+/* 
+   Procedure: sp_RestartDatabase
+   Author: Alexander Hinson. Edited by Aspen Frazee.
+   Created: 02-12-2026
+   Behavior:
+     - Drops all tables if they exist, creates all tables, and inserts test data.
+*/
+CREATE PROCEDURE `sp_RestartDatabase`()
+BEGIN
+    SET foreign_key_checks=0;
 
-// READ ROUTES
-app.get('/', async function (req, res) {
-    try {
-        res.render('home'); // Render the home.hbs file
-    } catch (error) {
-        console.error('Error rendering page:', error);
-        // Send a generic error message to the browser
-        res.status(500).send('An error occurred while rendering the page.');
-    }
-});
+    /* 
+    CITATION:
+        Date: 2/12/2026
+        Prompts used to generate SQL
+        Find the purpose for the error message:
+        1451 - Cannot delete or update a parent row: a foreign key constraint fails
+        AI Source URL: https://https://chatgpt.com/
+    */
+    DROP TABLE IF EXISTS ScanPOCs;
+    DROP TABLE IF EXISTS 3DScans;
+    DROP TABLE IF EXISTS Artifacts;
+    DROP TABLE IF EXISTS Technicians;
+    DROP TABLE IF EXISTS PointsOfContact;
 
-app.get('/3DScans', async function (req, res) {
-    try {
-        const query1 = `SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', \
-            Artifacts.artifactID AS 'Artifact ID', Technicians.techEmail AS 'Technician Contact', \
-            PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'Units', 3DScans.scanMethod AS 'Scan Method', \
-            3DScans.derived FROM 3DScans \
-            LEFT JOIN Artifacts ON 3DScans.artifactID = Artifacts.artifactID \
-            LEFT JOIN Technicians ON 3DScans.techID = Technicians.techID \
-            LEFT JOIN PointsOfContact ON 3DScans.labPOCID = PointsOfContact.pocID;`;
-        const query2 = 'SELECT * FROM Technicians;';
-        const query3 = 'SELECT * FROM PointsOfContact;';
-        const query4 = 'SELECT * FROM Artifacts;';
-        const [scans] = await db.query(query1);
-        const [techs] = await db.query(query2);
-        const [pocs] = await db.query(query3);
-        const [artifacts] = await db.query(query4);
-
-        res.render('3DScans', { scans: scans, techs: techs, pocs: pocs, artifacts: artifacts });
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
-    }
-});
-
-// Creates the functionality for the Artifacts page
-app.get('/Artifacts', async function (req, res) {
-    try {
-        // Create and execute our queries
-        const query1 = `SELECT Artifacts.artifactID AS 'ID', PointsOfContact.pocEmail AS 'Contact Email', Artifacts.onSite AS 'On Site', \
-            Artifacts.institutionalID AS 'Institutional ID', Artifacts.location AS 'Location', \
-            Artifacts.ipHolder AS 'IP Holder', Artifacts.license AS 'License', Artifacts.classification AS 'Classification', \
-            Artifacts.cultural AS 'Cultural', Artifacts.archaeology AS 'Archaeological' FROM Artifacts \
-            LEFT JOIN PointsOfContact ON Artifacts.pocID = PointsOfContact.pocID;`;
-        const query2 = 'SELECT * FROM PointsOfContact;';
-        
-        const [artifacts] = await db.query(query1);
-        const [pocs] = await db.query(query2);
-
-        // Render the Artifacts.hbs file, and also send the renderer
-        //  an object that contains our POC information
-        res.render('Artifacts', { artifacts: artifacts, pocs: pocs });
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
-    }
-});
-
-// Creates the functionality for the Technicians page
-app.get('/Technicians', async function (req, res) {
-    try {
-        // Create and execute our queries
-        const query1 = `SELECT techID AS 'ID', CONCAT(techFName, ' ', techLName) AS 'Technician Name', \
-        techEmail AS 'Email', techPhone AS 'Phone Number' FROM Technicians;`;
-        const [technicians] = await db.query(query1);
-
-        res.render('Technicians', { technicians: technicians });
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
-    }
-});
-
-// PointsOfContact page functionality
-app.get('/PointsOfContact', async function (req, res) {
-    try {
-        const query1 = `SELECT pocID AS 'ID', CONCAT(pocFName, ' ', pocLName) as 'Contact Name', pocEmail as 'Email', pocPhone as 'Phone Number', \
-        pocInstitution as 'Institution', active FROM PointsOfContact;`;
-        const [contacts] = await db.query(query1);
-        res.render('PointsOfContact', { contacts: contacts });
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
-    }
-});
-
-app.get('/ScanPOCs', async function (req, res) {
-    try {
-        const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'File', \
-            PointsOfContact.pocEmail AS 'Contact' FROM ScanPOCs \
-            LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID \
-            LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;`;
-        const query2 = 'SELECT * FROM 3DScans;';
-        const query3 = 'SELECT * FROM PointsOfContact;';
-        const [scancontacts] = await db.query(query1);
-        const [scans] = await db.query(query2);
-        const [pocs] = await db.query(query3);
-        res.render('ScanPOCs', { scancontacts: scancontacts, scans: scans, pocs: pocs });
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
-    }
-});
-
-
-app.post('/Reset', async function (req, res) {
-  try {
-    await db.query('CALL sp_RestartDatabase()');
-    return res.redirect(303, '/');  // ← end the request, force a GET
-  } catch (error) {
-    console.error('Error executing queries:', error);
-    return res.status(500).send('An error occurred while resetting the database.');
-  }
-});
-
-
-// Citation for use of AI Tools:
-// Date: 03/02/2026
-// Prompts used to generate PL/SQL
-// Edit my delete function to work with my stored procedure sp_delete_scanPOC.
-// into the following schema [movies db schema here] and returns the id of the newly inserted title. 
-// Write a test to verify the SP by inserting the title for the 2001 comedy movie Shrek.
-// AI Source URL: https://copilot.microsoft.com/
-
-app.post('/DeleteScanPOC', async function (req, res) {
-  try {
-    const scanPOCID = req.body.scanPOCID;
-
-    // Call the stored procedure (only one IN param)
-    const [resultSets] = await db.query('CALL sp_delete_scanPOC(?);', [scanPOCID]);
-
-    // mysql2 returns an array of result sets for CALL.
-    // Your proc does one SELECT at the end, so the message will be in resultSets[0][0].result_message
-    let msg = 'Error! Scan\'dout still in!';
-    if (Array.isArray(resultSets) && resultSets.length > 0 && resultSets[0]?.[0]?.result_message) {
-      msg = resultSets[0][0].result_message;
-    }
-
-    console.log('DeleteScanPOC:', msg);
-
-    // Option 1: redirect back to the list and optionally flash a message
-    res.redirect('/ScanPOCs');
-
-    // Option 2: if you want to show message inline without redirect, you could:
-    // res.status(200).send(msg);
-  } catch (error) {
-    console.error('Error executing queries:', error);
-    res.status(500).send('An error occured while executing the database queries.');
-  }
-});
-
-// This functionality was provided as a template in the
-// "Implementing CUD operations in your app" exploration
-// CREATE ROUTES
-app.post('/CreateScanPOC', async function (req, res) {
-    try {
-        // Parse frontend form information
-        let data = req.body;
-
-        // Create and execute our queries
-        // Using parameterized queries (Prevents SQL injection attacks)
-        const query1 = `CALL sp_create_scanPOC(?, ?, @new_id);`;
-
-        // Store ID of last inserted row
-        const [[[rows]]] = await db.query(query1, [
-            data.create_scanpoc_3DScan,
-            data.create_scanpoc_POC]);
-
-        console.log(`CREATE Scan'dout. ID: ${rows.new_id} ` +
-            `Details: Contact:${data.create_scanpoc_POC} Scan:${data.create_scanpoc_3DScan}`
-        );
-
-        // Redirect the user to the updated webpage
-        res.redirect('/ScanPOCs');
-    } catch (error) {
-        console.error('Error executing queries:', error);
-        // Send a generic error message to the browser
-        res.status(500).send(
-            'An error occurred while executing the database queries.'
-        );
-    }
-});
-
-// Citation for use of AI Tools:
-// Date: 03/09/2026
-// Prompts used to generate PL/SQL
-// Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
-// The SP takes in the following parameters: scanPOCID, scanID, pocID. 
-// The SP updates the ScanPOCs table with the provided scanID and 
-// pocID where the scanPOCID matches the provided scanPOCID. 
-// AI Source URL: https://copilot.microsoft.com/
-app.post('/UpdateScanPOC', async (req, res) => {
-  try {
-        const scanPOCID = req.body.update_scanPOC_id;
-        const scanID    = req.body.update_scan_ID;
-        const pocID     = req.body.update_poc_ID;
-
-        const query1 = 'CALL sp_update_scanPOC(?, ?, ?);';
-
-        const [resultSets] = await db.query('CALL sp_update_scanPOC(?, ?, ?);', 
-            [scanPOCID, scanID, pocID]);
-
-        res.redirect('/ScanPOCs');
-  } catch (err) {
-    console.error('Error executing queries:', err);
-    console.log('POST /UpdateScanPOC body:', req.body);
-    res.status(500).send('An error occurred while executing the database queries.');
-  }
-});
-
-// ########################################
-// ########## LISTENER
-
-app.listen(PORT, function () {
-    console.log(
-        'Express started on http://localhost:' +
-            PORT +
-            '; press Ctrl-C to terminate.'
+    -- =================
+    -- TABLE DEFINITIONS
+    -- =================
+    CREATE TABLE PointsOfContact (
+        pocID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
+        active BOOLEAN NOT NULL DEFAULT 1,
+        pocFName VARCHAR(26) NOT NULL,
+        pocLName VARCHAR(26) NOT NULL,
+        pocEmail VARCHAR(51) NOT NULL,
+        pocPhone VARCHAR(26) NOT NULL,
+        pocInstitution VARCHAR(101) NOT NULL
     );
-});
+
+    CREATE TABLE Artifacts (
+        artifactID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
+        pocID  INT(11) NOT NULL,
+        onSite BOOLEAN NOT NULL DEFAULT TRUE,
+        institutionalID VARCHAR(101),
+        location VARCHAR(50) NOT NULL,
+        ipHolder VARCHAR(50),
+        license VARCHAR(50),
+        classification VARCHAR(50) NOT NULL,
+        cultural BOOLEAN NOT NULL DEFAULT FALSE,
+        archaeology BOOLEAN NOT NULL DEFAULT FALSE,
+        FOREIGN KEY (pocID) REFERENCES PointsOfContact(pocID)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+    );
+
+    CREATE TABLE Technicians (
+        techID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
+        techFName VARCHAR(26) NOT NULL,
+        techLName VARCHAR(26) NOT NULL,
+        techEmail VARCHAR(51) NOT NULL,
+        techPhone VARCHAR(26) NOT NULL
+    );
+
+    CREATE TABLE 3DScans (
+        scanID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
+        artifactID INT(11) NOT NULL,
+        labPOCID INT(11) NOT NULL,
+        techID INT(11) NOT NULL,
+        scanDate DATE NOT NULL,
+        units VARCHAR(10) NOT NULL DEFAULT 'mm',
+        scanMethod VARCHAR(50) NOT NULL,
+        derived BOOLEAN NOT NULL DEFAULT FALSE,
+        fileName VARCHAR (50) NOT NULL UNIQUE,
+        doi VARCHAR (50),
+        FOREIGN KEY (artifactID) REFERENCES Artifacts(artifactID) 
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+        FOREIGN KEY (labPOCID) REFERENCES PointsOfContact(pocID) 
+        ON DELETE RESTRICT ON UPDATE CASCADE,
+        FOREIGN KEY (techID) REFERENCES Technicians(techID) 
+        ON DELETE RESTRICT ON UPDATE CASCADE
+    );
+
+    -- M:M intersection table between PointsOfContact and 3DScans.
+    CREATE TABLE ScanPOCs (
+        scanPOCID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
+        pocID INT(11) NOT NULL,
+        scanID INT(11) NOT NULL,
+        FOREIGN KEY (pocID) REFERENCES PointsOfContact(pocID) 
+        ON DELETE CASCADE ON UPDATE CASCADE,
+        FOREIGN KEY (scanID) REFERENCES 3DScans(scanID) 
+        ON DELETE CASCADE ON UPDATE CASCADE
+    );
+
+    SET foreign_key_checks=1; -- Moved to after the drops by Copilot recommendation
+
+    -- ==================
+    -- INSERT DEFINITIONS
+    -- ==================
+    START TRANSACTION; -- Copilot recommendation: "Put DML in a transaction; DDL has already committed"
+
+    INSERT INTO PointsOfContact (
+        active,
+        pocFName,
+        pocLName,
+        pocEmail,
+        pocPhone,
+        pocInstitution
+    )
+    VALUES
+    (
+        1,
+        'Samwell',
+        'Tarly',
+        'STarly@housetarly.com',
+        '555-432-9876',
+        'The Citadel Library'
+    ),
+    (
+        0,
+        'Jaime',
+        'Lannister',
+        'JLannister@houselannister.com',
+        '222-543-6789',
+        'Kings Landing'
+    ),
+    (
+        1,
+        'Cersei',
+        'Lannister',
+        'CLannister@houselannister.com',
+        '222-543-6799',
+        'Kings Landing'
+    );
+
+    -- This poc will be used for 2 3dscans and no artifacts.
+    -- No active boolean will be provided here to show the default value.
+    INSERT INTO PointsOfContact (
+        pocFName,
+        pocLName,
+        pocEmail,
+        pocPhone,
+        pocInstitution
+    )
+    VALUES
+    (
+        'Tyrion',
+        'Lannister',
+        'TLannister@houselannister.com',
+        '222-345-6789',
+        'All around Westeros'
+    );
+
+    -- Inserting enough artifacts to cover the examples of the 1:M relationship 
+    -- between not only PoC but also with 3dScans.
+    INSERT INTO Artifacts (
+        pocID,
+        onSite,
+        institutionalID,
+        location,
+        ipHolder,
+        license,
+        classification,
+        cultural,
+        archaeology
+    )
+    VALUES
+    (
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
+        1,
+        NULL,
+        '3D Scanning Lab',
+        'Pacific Slope Archaeological Laboratory',
+        'CC BY-NC-SA 4.0',
+        'Groundstone',
+        0,
+        0
+    ),
+    (
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
+        1,
+        'CS191',
+        '3D Scanning Lab',
+        'Pacific Slope Archaeological Laboratory',
+        'CC BY-NC-SA 4.0',
+        'Vertebra',
+        0,
+        0
+    ),
+    (
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
+        0,
+        NULL,
+        'N/a',
+        'Archaeomodels',
+        'CC BY-SA',
+        'Bifacial',
+        1,
+        0
+    );
+
+    -- To show the 1:M relationship between technicians and 3dscans, 
+    -- there will be 3 test case technicians, 
+    -- each linked to a different number of 3D scans.
+    INSERT INTO Technicians (
+        techFName,
+        techLName,
+        techEmail,
+        techPhone
+    )
+    VALUES
+    (
+        -- This technician will be attached to 2 3d scans
+        'Jon',
+        'Snow',
+        'JSnow@housestark.com',
+        '111-222-3333'
+    ),
+    (
+        -- This technician will be attached to 1 3d scan
+        'Arya',
+        'Stark',
+        'AStark@housestark.com',
+        '111-223-3334'
+    ),
+    (
+        -- This technician will exist without a 3dScan, emphasizing that a 3dScan for a technician is optional
+        'Sansa',
+        'Stark',
+        'SStark@housestark.com',
+        '111-233-3344'
+    );
+
+    -- Each 3dscan will demonstrate the different levels of the M:N relationship 
+    -- that 3DScans has with PointsOfContact
+    INSERT INTO 3DScans (
+        artifactID,
+        labPOCID,
+        techID,
+        scanDate,
+        scanMethod,
+        derived,
+        fileName
+    )
+    VALUES
+    (
+        (SELECT artifactID FROM Artifacts WHERE artifactID = 1),
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+        (SELECT techID FROM Technicians WHERE techFName = 'Jon' AND techLName = 'Snow'),
+        '20260106',
+        'Structured Light',
+        0,
+        'Scan_1_Cobble_No_Text.stl'
+    ),
+    (
+        (SELECT artifactID FROM Artifacts WHERE artifactID = 2),
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+        (SELECT techID FROM Technicians WHERE techFName = 'Jon' AND techLName = 'Snow'),
+        '20260113',
+        'Structured Light',
+        0,
+        'vertebra_text.obj'
+    ),
+    (
+        (SELECT artifactID FROM Artifacts WHERE artifactID = 2),
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+        (SELECT techID FROM Technicians WHERE techFName = 'Arya' AND techLName = 'Stark'),
+        '20260113',
+        'Structured Light',
+        0,
+        'vertebra_no_text.obj'
+    );
+
+    -- Inserting enough test data with the pocID and scanID FKs 
+    -- to showcase the M:N relationship between them.
+    INSERT INTO ScanPOCs (
+        pocID,
+        scanID
+    )
+    VALUES
+    (
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
+        (SELECT scanID FROM 3DScans WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
+    ),
+    (
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
+        (SELECT scanID FROM 3DScans WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
+    ),
+    (
+        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
+        (SELECT scanID FROM 3DScans WHERE fileName = 'vertebra_text.obj')
+    );
+
+    COMMIT;
+END //
+-- end sp_RestartDatabase
+
+/* 
+   Procedure: sp_delete_scanPOC
+   Author: Aspen Frazee. Edited by Alexander Hinson.
+   Created: 03-02-2026
+   Behavior:
+        Deletes a scanPOC by its PK, with error handling to prevent deletion
+        if the scanPOC is still in use by a 3DScan.
+    CITATION:
+        Date: 2/12/2026
+        Prompts used:
+            Write a stored procedure for MariaDB called sp_delete_scanPOC 
+            that deletes a scan point of contact (POC) from the ScanPOCs table 
+            based on the provided scanPOCID. 
+            The procedure should return a message indicating 
+            whether the deletion was successful or if there was an error 
+            (e.g., if the scanPOCID does not exist 
+            or if there are foreign key constraints preventing the deletion). 
+            Use appropriate error handling to manage exceptions 
+            and ensure that the database remains consistent.
+        AI Source URL: https://m365.cloud.microsoft/chat/
+*/
+CREATE PROCEDURE `sp_delete_scanPOC`(IN `p_scanPOCID` INT)
+BEGIN
+    DECLARE v_msg VARCHAR(64);
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+
+    BEGIN
+        ROLLBACK;
+        SELECT 'Error! Scan''dout still in!' AS v_msg;
+    END;
+
+    START TRANSACTION;
+    DELETE FROM `ScanPOCs`
+    WHERE `scanPOCID` = p_scanPOCID;
+
+    IF ROW_COUNT() = 1 THEN
+        COMMIT;
+        SELECT 'Scan''dout out' AS v_msg;
+    ELSE
+        ROLLBACK;
+        SELECT 'Error! Scan''dout still in!' AS v_msg;
+    END IF;
+END //
+-- end sp_delete_scanPOC
+
+/* 
+   Procedure: sp_create_scanPOC
+   Author: Alexander Hinson. Edited by Aspen Frazee.
+   Created: 03-09-2026
+   Behavior:
+        Creates a scanPOC by its PK, with error handling to prevent creation
+        if the scanPOC is already in use by a 3DScan.
+    CITATION:
+        Date: 3/9/2026
+        Source: This functionality is from a template that was provided in the
+            "Implementing CUD operations in your app" exploration.
+*/
+CREATE PROCEDURE sp_create_scanPOC(
+    IN s_id INT, 
+    IN c_id INT, 
+    OUT scanPOC_id INT)
+BEGIN
+    INSERT INTO ScanPOCs (pocID, scanID) 
+    VALUES (c_id, s_id);
+
+    -- Store the ID of the last inserted row
+    SELECT LAST_INSERT_ID() into scanPOC_id;
+    -- Display the ID of the last inserted person.
+    SELECT LAST_INSERT_ID() AS 'new_id';
+
+END //
+-- end sp_create_scanPOC
+
+/* 
+   Procedure: sp_update_scanPO
+   Author: Aspen Frazee
+   Created: 03-09-2026
+   Behavior:
+        Updates a scanPOC by its PK, with error handling to prevent updates
+        if the scanPOC is already in use by a 3DScan.
+    CITATION:
+        Date: 3/9/2026
+        Source: This functionality is from a template that was provided in the
+*/
+CREATE PROCEDURE sp_update_scanPOC(
+    IN p_scanPOCID INT,
+    IN p_scanID INT, 
+    IN p_pocID INT)
+BEGIN
+    UPDATE ScanPOCs 
+    SET 
+        scanID = p_scanID, 
+        pocID = p_pocID 
+    WHERE scanPOCID = p_scanPOCID;
+END //
+-- end sp_update_scanPOC
+
+DELIMITER ;
