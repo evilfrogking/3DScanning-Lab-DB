@@ -233,18 +233,32 @@ app.post('/CreateScanPOC', async function (req, res) {
 // Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
 // The SP takes in the following parameters: scanPOCID, scanID, pocID. 
 // The SP updates the ScanPOCs table with the provided scanID and 
-// pocID where the scanPOCID matches the provided scanPOCID. 
+// pocID where the scanPOCID matches the provided scanPOCID.
+// Copilot wrote input validation as well.
 // AI Source URL: https://copilot.microsoft.com/
 app.post('/UpdateScanPOC', async (req, res) => {
   try {
         const scanPOCID = req.body.update_scanPOC_id;
-        const scanID    = req.body.update_scan_ID;
-        const pocID     = req.body.update_poc_ID;
+        const newScanID    = req.body.update_scan_ID;
+        const newPocID     = req.body.update_poc_ID;
+
+        const [[current]] = await db.query(
+            'SELECT scanID, pocID FROM ScanPOCs WHERE scanPOCID = ?', [scanPOCID]
+        );
+
+        const scanChanged = current.scanID !== newScanID;
+        const pocChanged = current.pocID !== newPocID;
+
+        // XOR the update options - if both are the same, or both are different, we have an error
+        if ((scanChanged && pocChanged) || (!scanChanged && !pocChanged)) {
+            console.error('Error: Invalid update parameters. Both scanID and pocID must be changed, or both must be unchanged.');
+            return res.status(400).send('Invalid update parameters. Please change either the scanID or the pocID, but not both.');
+        }
 
         const query1 = 'CALL sp_update_scanPOC(?, ?, ?);';
 
         const [resultSets] = await db.query('CALL sp_update_scanPOC(?, ?, ?);', 
-            [scanPOCID, scanID, pocID]);
+            [scanPOCID, newScanID, newPocID]);
 
         res.redirect('/ScanPOCs');
   } catch (err) {
