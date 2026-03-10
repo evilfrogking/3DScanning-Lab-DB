@@ -58,48 +58,64 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
     <input type='submit' />
 </form>
 
-{{! UPDATE form }}
 <h2>Update a Scan'dout</h2>
 <form class='cuForm' id='update_scanPOC_form' method='POST' action='/UpdateScanPOC'>
-    <label for='update_scanPOC_id'>Scan'dout to Update: </label>
-    <select name='update_scanPOC_id' id='update_scanPOC_id' required>
-        <option value='' disabled selected>Select a Scan'dout</option>
-        {{#each scancontacts}}
-        <option value='{{this.ID}}'>
-            {{this.ID}}
-            -
-            {{this.[File]}}
-             - loaned to - 
-              {{!-- I want this to be first and last name --}}
-            {{this.[Contact]}}
-        </option>
-        {{/each}}
-    </select>
+  <label for='update_scanPOC_id'>Scan'dout to Update: </label>
+  <select name='update_scanPOC_id' id='update_scanPOC_id' required>
+    <option value='' disabled selected>Select a Scan'dout</option>
+    {{#each scancontacts}}
+      <option value='{{this.ID}}'>
+        {{this.ID}} - {{this.[File]}} - loaned to - {{this.[Contact]}}
+      </option>
+    {{/each}}
+  </select>
 
-    <label for='update_scan_ID'>Scan: </label>
-    <select name='update_scan_ID' id='update_scan_ID' required>
-        <option value='' disabled selected>Select a Scan</option>
-        {{#each scans}}
-        <option value='{{this.scanID}}' required>
-            {{this.scanID}}
-            -
-            {{this.fileName}}
-        </option>
-        {{/each}}
-    </select>
+  <label for='update_scan_ID'>Scan: </label>
+  <select name='update_scan_ID' id='update_scan_ID' required disabled>
+    <option value='' disabled selected>Select a Scan</option>
+    {{#each scans}}
+      <option value='{{this.scanID}}' required>
+        {{this.scanID}} - {{this.fileName}}
+      </option>
+    {{/each}}
+  </select>
 
-    <label for='update_poc_ID'>POC: </label>
-    <select name='update_poc_ID' id='update_poc_ID' required>
-        <option value='' disabled selected>Select a POC</option>
-        {{#each pocs}}
-        <option value='{{this.pocID}}' required>
-            {{this.pocFName}}
-            {{this.pocLName}}
-            -
-            {{this.pocEmail}}
-        </option>
-        {{/each}}
-    </select>
+  <label for='update_poc_ID'>POC: </label>
+  <select name='update_poc_ID' id='update_poc_ID' required disabled>
+    <option value='' disabled selected>Select a POC</option>
+    {{#each pocs}}
+      <option value='{{this.pocID}}' required>
+        {{this.pocFName}} {{this.pocLName}} - {{this.pocEmail}}
+      </option>
+    {{/each}}
+  </select>
 
-    <input type='submit' />
+  <input type='submit' />
 </form>
+
+<script>
+(() => {
+  const pkSel   = document.getElementById('update_scanPOC_id');
+  const scanSel = document.getElementById('update_scan_ID');
+  const pocSel  = document.getElementById('update_poc_ID');
+
+  function setDetailsEnabled(enabled) {
+    scanSel.disabled = !enabled;
+    pocSel.disabled  = !enabled;
+    if (!enabled) {
+      // optional: reset to placeholder if you want them blanked when disabled
+      scanSel.value = '';
+      pocSel.value  = '';
+    }
+  }
+
+  // Initial: locked until PK chosen
+  setDetailsEnabled(false);
+
+  // When PK changes, enable details if a real value is selected
+  pkSel.addEventListener('change', () => {
+    const hasPK = pkSel.value && pkSel.value !== '';
+    setDetailsEnabled(!!hasPK);
+  });
+})();
+</script>
