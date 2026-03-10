@@ -60,25 +60,25 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
 
 {{! UPDATE form }}
 <h2>Update a Scan'dout</h2>
-<form class='cuForm' id='update_scanPOC_form'>
+<form class='cuForm' id='update_scanPOC_form' method='POST' action='/UpdateScanPOC'>
     <label for='update_scanPOC_id'>Scan'dout to Update: </label>
     <select name='update_scanPOC_id' id='update_scanPOC_id' required>
         <option value='' disabled selected>Select a Scan'dout</option>
         {{#each scancontacts}}
-        <option value='{{this.ID}}' required>
+        <option value='{{this.ID}}'>
             {{this.ID}}
             -
-            {{this.[Scan File]}}
+            {{this.[File]}}
              - loaned to - 
-            {{this.[Contact Email]}}
+              {{!-- I want this to be first and last name --}}
+            {{this.[Contact]}}
         </option>
         {{/each}}
     </select>
 
     <label for='update_scan_ID'>Scan: </label>
-    <select name='update_scan_ID' id='update_scan_ID'>
-        <option value='NULL' disabled selected>Select a Scan</option>
-        <option value='NULL'>&lt; None &gt;</option>
+    <select name='update_scan_ID' id='update_scan_ID' required>
+        <option value='' disabled selected>Select a Scan</option>
         {{#each scans}}
         <option value='{{this.scanID}}' required>
             {{this.scanID}}
@@ -89,9 +89,8 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
     </select>
 
     <label for='update_poc_ID'>POC: </label>
-    <select name='update_poc_ID' id='update_poc_ID'>
-        <option value='NULL' disabled selected>Select a POC</option>
-        <option value='NULL'>&lt; None &gt;</option>
+    <select name='update_poc_ID' id='update_poc_ID' required>
+        <option value='' disabled selected>Select a POC</option>
         {{#each pocs}}
         <option value='{{this.pocID}}' required>
             {{this.pocFName}}
