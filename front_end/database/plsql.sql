@@ -6,17 +6,7 @@
      - sp_create_scanPOC: creates a scanPOC by its PK, with error handling to prevent creation if the scanPOC is already in use by a 3DScan.
    Author: Aspen Frazee and Alexander Hinson
    Created: 02-12-2026
-   Last Update: 03-09-2026
-   Notes:
-        Alex: There will be multiple points of contact made to stress the M:N relationship
-            between points of contact and 3D scans.
-            To show the 1:M relationship between points of contact and artifacts,
-            the entered points of contact will also be linked to up to 2 artifacts.
-            The first point of contact will be the technician used for the 
-            LabPOCID value or the required relationship between 3D scans and poc.
-            The second point of contact will be used for 1 3D scan and 1 artifact.
-            The third point of contact will be used for 0 3dscans and 2 artifacts.
-
+   Last Update: 03-13-2026
 */
 
 -- ================
@@ -100,7 +90,6 @@ BEGIN
         scanMethod VARCHAR(50) NOT NULL,
         derived BOOLEAN NOT NULL DEFAULT FALSE,
         fileName VARCHAR (50) NOT NULL UNIQUE,
-        doi VARCHAR (50),
         FOREIGN KEY (artifactID) REFERENCES Artifacts(artifactID) 
         ON DELETE RESTRICT ON UPDATE CASCADE,
         FOREIGN KEY (labPOCID) REFERENCES PointsOfContact(pocID) 
@@ -121,16 +110,14 @@ BEGIN
     );
 
     SET foreign_key_checks=1; -- Moved to after the drops by Copilot recommendation
-
+    START TRANSACTION; -- Copilot recommendation: "Put DML in a transaction; DDL has already committed"
     -- ==================
     -- INSERT DEFINITIONS
     -- ==================
-    START TRANSACTION; -- Copilot recommendation: "Put DML in a transaction; DDL has already committed"
 
     INSERT INTO PointsOfContact (
         active,
-        pocFName,
-        pocLName,
+        pocFName, pocLName,
         pocEmail,
         pocPhone,
         pocInstitution
@@ -138,49 +125,33 @@ BEGIN
     VALUES
     (
         1,
-        'Samwell',
-        'Tarly',
+        'Samwell', 'Tarly',
         'STarly@housetarly.com',
         '555-432-9876',
         'The Citadel Library'
     ),
     (
         0,
-        'Jaime',
-        'Lannister',
+        'Jaime', 'Lannister',
         'JLannister@houselannister.com',
         '222-543-6789',
         'Kings Landing'
     ),
     (
         1,
-        'Cersei',
-        'Lannister',
+        'Cersei', 'Lannister',
         'CLannister@houselannister.com',
         '222-543-6799',
         'Kings Landing'
-    );
-
-    -- This poc will be used for 2 3dscans and no artifacts.
+    ),
     -- No active boolean will be provided here to show the default value.
-    INSERT INTO PointsOfContact (
-        pocFName,
-        pocLName,
-        pocEmail,
-        pocPhone,
-        pocInstitution
-    )
-    VALUES
     (
-        'Tyrion',
-        'Lannister',
+        'Tyrion', 'Lannister',
         'TLannister@houselannister.com',
         '222-345-6789',
         'All around Westeros'
     );
 
-    -- Inserting enough artifacts to cover the examples of the 1:M relationship 
-    -- between not only PoC but also with 3dScans.
     INSERT INTO Artifacts (
         pocID,
         onSite,
@@ -189,78 +160,65 @@ BEGIN
         ipHolder,
         license,
         classification,
-        cultural,
-        archaeology
+        cultural, archaeology
     )
     VALUES
     (
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
         1,
         NULL,
         '3D Scanning Lab',
         'Pacific Slope Archaeological Laboratory',
         'CC BY-NC-SA 4.0',
         'Groundstone',
-        0,
-        0
+        0, 0
     ),
     (
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
         1,
         'CS191',
         '3D Scanning Lab',
         'Pacific Slope Archaeological Laboratory',
         'CC BY-NC-SA 4.0',
         'Vertebra',
-        0,
-        0
+        0, 0
     ),
     (
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
         0,
         NULL,
         'N/a',
         'Archaeomodels',
         'CC BY-SA',
         'Bifacial',
-        1,
-        0
+        1, 0
     );
 
-    -- To show the 1:M relationship between technicians and 3dscans, 
-    -- there will be 3 test case technicians, 
-    -- each linked to a different number of 3D scans.
     INSERT INTO Technicians (
-        techFName,
-        techLName,
+        techFName, techLName,
         techEmail,
         techPhone
     )
     VALUES
     (
-        -- This technician will be attached to 2 3d scans
-        'Jon',
-        'Snow',
+        'Jon', 'Snow',
         'JSnow@housestark.com',
         '111-222-3333'
     ),
     (
-        -- This technician will be attached to 1 3d scan
-        'Arya',
-        'Stark',
+        'Arya', 'Stark',
         'AStark@housestark.com',
         '111-223-3334'
     ),
     (
-        -- This technician will exist without a 3dScan, emphasizing that a 3dScan for a technician is optional
-        'Sansa',
-        'Stark',
+        'Sansa', 'Stark',
         'SStark@housestark.com',
         '111-233-3344'
     );
 
-    -- Each 3dscan will demonstrate the different levels of the M:N relationship 
-    -- that 3DScans has with PointsOfContact
     INSERT INTO 3DScans (
         artifactID,
         labPOCID,
@@ -272,51 +230,64 @@ BEGIN
     )
     VALUES
     (
-        (SELECT artifactID FROM Artifacts WHERE artifactID = 1),
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
-        (SELECT techID FROM Technicians WHERE techFName = 'Jon' AND techLName = 'Snow'),
+        (SELECT artifactID FROM Artifacts 
+            WHERE artifactID = 1),
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+        (SELECT techID FROM Technicians 
+            WHERE techFName = 'Jon' AND techLName = 'Snow'),
         '20260106',
         'Structured Light',
         0,
         'Scan_1_Cobble_No_Text.stl'
     ),
     (
-        (SELECT artifactID FROM Artifacts WHERE artifactID = 2),
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
-        (SELECT techID FROM Technicians WHERE techFName = 'Jon' AND techLName = 'Snow'),
+        (SELECT artifactID FROM Artifacts 
+            WHERE artifactID = 2),
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+        (SELECT techID FROM Technicians 
+            WHERE techFName = 'Jon' AND techLName = 'Snow'),
         '20260113',
         'Structured Light',
         0,
         'vertebra_text.obj'
     ),
     (
-        (SELECT artifactID FROM Artifacts WHERE artifactID = 2),
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
-        (SELECT techID FROM Technicians WHERE techFName = 'Arya' AND techLName = 'Stark'),
+        (SELECT artifactID FROM Artifacts 
+            WHERE artifactID = 2),
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+        (SELECT techID FROM Technicians 
+            WHERE techFName = 'Arya' AND techLName = 'Stark'),
         '20260113',
         'Structured Light',
         0,
         'vertebra_no_text.obj'
     );
 
-    -- Inserting enough test data with the pocID and scanID FKs 
-    -- to showcase the M:N relationship between them.
     INSERT INTO ScanPOCs (
         pocID,
         scanID
     )
     VALUES
     (
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
-        (SELECT scanID FROM 3DScans WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
+        (SELECT scanID FROM 3DScans 
+        WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
     ),
     (
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
-        (SELECT scanID FROM 3DScans WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
+        (SELECT scanID FROM 3DScans 
+            WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
     ),
     (
-        (SELECT pocID FROM PointsOfContact WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
-        (SELECT scanID FROM 3DScans WHERE fileName = 'vertebra_text.obj')
+        (SELECT pocID FROM PointsOfContact 
+            WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
+        (SELECT scanID FROM 3DScans 
+            WHERE fileName = 'vertebra_text.obj')
     );
 
     COMMIT;
@@ -330,7 +301,7 @@ END //
    Behavior:
         Deletes a scanPOC by its PK, with error handling to prevent deletion
         if the scanPOC is still in use by a 3DScan.
-    CITATION:
+    CITATION for AI use:
         Date: 2/12/2026
         Prompts used:
             Write a stored procedure for MariaDB called sp_delete_scanPOC 
@@ -403,6 +374,9 @@ END //
    Behavior:
         Updates a scanPOC by its PK, with error handling to prevent updates
         if the scanPOC is already in use by a 3DScan.
+    Note:
+        I had used Copilot origionally to make the update functionality,
+        but after encountering an error, I rewrote the code.
 */
 CREATE PROCEDURE sp_update_scanPOC(
     IN p_scanPOCID INT,
