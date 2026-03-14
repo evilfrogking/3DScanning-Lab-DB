@@ -243,18 +243,18 @@ app.post('/CreateScanPOC', async function (req, res) {
 // The SP updates the ScanPOCs table with the provided scanID and 
 // pocID where the scanPOCID matches the provided scanPOCID. 
 // AI Source URL: https://copilot.microsoft.com/
+// Make sure (once, near your app setup) you can parse form bodies:
+// app.use(express.urlencoded({ extended: true }));
 app.post('/UpdateScanPOC', async (req, res) => {
   try {
-        const scanPOCID = req.body.update_scanPOC_id;
-        const scanID    = req.body.update_scan_ID;
-        const pocID     = req.body.update_poc_ID;
+    const scanPOCID = Number(req.body.update_scanPOC_id);
+    const newPocID  = Number(req.body.update_poc_ID);
 
-        const query1 = 'CALL sp_update_scanPOC(?, ?, ?);';
+    await db.query('CALL sp_update_scanPOC(?, ?);', [
+      scanPOCID, newPocID
+    ]);
 
-        const [resultSets] = await db.query('CALL sp_update_scanPOC(?, ?, ?);', 
-            [scanPOCID, scanID, pocID]);
-
-        res.redirect('/ScanPOCs');
+    res.redirect('/ScanPOCs');
   } catch (err) {
     console.error('Error executing queries:', err);
     console.log('POST /UpdateScanPOC body:', req.body);
