@@ -90,3 +90,30 @@ AI Source URL: https://copilot.microsoft.com/ --}}
 
   <input type='submit' />
 </form>
+
+<script>
+(() => {
+  const pkSel   = document.getElementById('update_scanPOC_id');
+  const scanSel = document.getElementById('update_scan_ID');
+  const pocSel  = document.getElementById('update_poc_ID');
+
+  function setDetailsEnabled(enabled) {
+    scanSel.disabled = !enabled;
+    pocSel.disabled  = !enabled;
+    if (!enabled) {
+      // optional: reset to placeholder if you want them blanked when disabled
+      scanSel.value = '';
+      pocSel.value  = '';
+    }
+  }
+
+  // Initial: locked until PK chosen
+  setDetailsEnabled(false);
+
+  // When PK changes, enable details if a real value is selected
+  pkSel.addEventListener('change', () => {
+    const hasPK = pkSel.value && pkSel.value !== '';
+    setDetailsEnabled(!!hasPK);
+  });
+})();
+</script>
