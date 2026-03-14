@@ -1,3 +1,11 @@
+{{!-- 
+    File: main.hbs
+    Purpose: This file contains the main layout template for our Handlebars views in the front-end of our project.
+    Author: Aspen Frazee and Alexander Hinson
+    Created: 02-06-2026
+    Last Update: 03-13-2026 
+--}}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,9 +13,9 @@
     <title>CS340 - My Project</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <nav>
-        Navigation: 
         <div>
             <a href="/">Home</a>
             <a href="/3DScans">3D Scans</a>
@@ -18,11 +26,13 @@
         </div>
         {{! Consulted Copilot on some debugging. Made this a form because of that.}}
         <form method='POST' action='/Reset'>
-            <button id='restart_database_button' action='submit'>Reset Database</button>
+            <button id='restart_database_button' type='submit'>Reset Database</button>
         </form>
     </nav>
-
+    
+    <div class="page">
     {{{body}}}
+    </div>
 
 </body>
 </html>
