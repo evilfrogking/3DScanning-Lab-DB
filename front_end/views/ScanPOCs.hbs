@@ -58,49 +58,35 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
     <input type='submit' />
 </form>
 
-{{! UPDATE form }}
+{{!-- Citation for use of AI Tools:
+Date: 03/09/2026
+Prompt: Please write input validation so users to be able to chose the PK, 
+then select a new POC and that locks the files, 
+or a new file and that locks the POC. I also want a way for the users to deselect their options.
+Degree of origionality: This code has been heavily modified by Copilot, including all of the error handling 
+and updated form logic.
+AI Source URL: https://copilot.microsoft.com/ --}}
 <h2>Update a Scan'dout</h2>
-<form class='cuForm' id='update_scanPOC_form'>
-    <label for='update_scanPOC_id'>Scan'dout to Update: </label>
-    <select name='update_scanPOC_id' id='update_scanPOC_id' required>
-        <option value='' disabled selected>Select a Scan'dout</option>
-        {{#each scancontacts}}
-        <option value='{{this.ID}}' required>
-            {{this.ID}}
-            -
-            {{this.[Scan File]}}
-             - loaned to - 
-            {{this.[Contact Email]}}
-        </option>
-        {{/each}}
-    </select>
+<form class='cuForm' id='update_scanPOC_form' method='POST' action='/UpdateScanPOC'>
+  <label for='update_scanPOC_id'>Scan'dout to Update: </label>
+  <select name='update_scanPOC_id' id='update_scanPOC_id' required>
+    <option value='' selected>Select a Scan'dout</option>
+    {{#each scancontacts}}
+      <option value='{{this.ID}}'>
+        {{this.ID}} - {{this.[File]}} - loaned to - {{this.[Contact]}}
+      </option>
+    {{/each}}
+  </select>
 
-    <label for='update_scan_ID'>Scan: </label>
-    <select name='update_scan_ID' id='update_scan_ID'>
-        <option value='NULL' disabled selected>Select a Scan</option>
-        <option value='NULL'>&lt; None &gt;</option>
-        {{#each scans}}
-        <option value='{{this.scanID}}' required>
-            {{this.scanID}}
-            -
-            {{this.fileName}}
-        </option>
-        {{/each}}
-    </select>
+  <label for='update_poc_ID'>POC: </label>
+  <select name='update_poc_ID' id='update_poc_ID' required>
+    <option value='' selected>Select a POC</option>
+    {{#each pocs}}
+      <option value='{{this.pocID}}' required>
+        {{this.pocFName}} {{this.pocLName}} - {{this.pocEmail}}
+      </option>
+    {{/each}}
+  </select>
 
-    <label for='update_poc_ID'>POC: </label>
-    <select name='update_poc_ID' id='update_poc_ID'>
-        <option value='NULL' disabled selected>Select a POC</option>
-        <option value='NULL'>&lt; None &gt;</option>
-        {{#each pocs}}
-        <option value='{{this.pocID}}' required>
-            {{this.pocFName}}
-            {{this.pocLName}}
-            -
-            {{this.pocEmail}}
-        </option>
-        {{/each}}
-    </select>
-
-    <input type='submit' />
+  <input type='submit' />
 </form>
