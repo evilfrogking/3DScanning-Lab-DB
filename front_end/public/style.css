@@ -1,14 +1,14 @@
 /* 
-    File: style.css
-    Purpose: This file contains the CSS styling for the front-end of our project.
-    Author: Aspen Frazee and Alexander Hinson
-    Created: 02-06-2026
-    Last Update: 03-13-2026
-    Citation for use of AI Tools:
-    Date: 03/13/2026
-    Prompt: Provide a modern, clean CSS style for a web application that manages 3D scans of artifacts. 
-            The overall aesthetic should be professional yet inviting, suitable for an academic or museum context.
-    AI Source URL: https://copilot.microsoft.com/ 
+  File: style.css
+  Purpose: This file contains the CSS styling for the front-end of our project.
+  Author: Aspen Frazee and Alexander Hinson
+  Created: 02-06-2026
+  Last Update: 03-13-2026
+  Citation for use of AI Tools:
+  Date: 03/13/2026
+  Prompt: Provide a modern, clean CSS style for a web application that manages 3D scans of artifacts. 
+          The overall aesthetic should be professional yet inviting, suitable for an academic or museum context.
+  AI Source URL: https://copilot.microsoft.com/ 
 */
 
 :root {
