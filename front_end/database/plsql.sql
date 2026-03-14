@@ -25,6 +25,7 @@
 DROP PROCEDURE IF EXISTS sp_RestartDatabase;
 DROP PROCEDURE IF EXISTS sp_delete_scanPOC;
 DROP PROCEDURE IF EXISTS sp_create_scanPOC;
+DROP PROCEDURE IF EXISTS sp_update_scanPOC;
 
 DELIMITER //
 
@@ -394,4 +395,24 @@ BEGIN
 
 END //
 -- end sp_create_scanPOC
+
+/* 
+   Procedure: sp_update_scanPOC
+   Author: Aspen Frazee
+   Created: 03-09-2026
+   Behavior:
+        Updates a scanPOC by its PK, with error handling to prevent updates
+        if the scanPOC is already in use by a 3DScan.
+*/
+CREATE PROCEDURE sp_update_scanPOC(
+    IN p_scanPOCID INT,
+    IN p_pocID INT)
+BEGIN
+    UPDATE ScanPOCs 
+    SET 
+        pocID = p_pocID 
+    WHERE scanPOCID = p_scanPOCID;
+END //
+-- end sp_update_scanPOC
+
 DELIMITER ;
