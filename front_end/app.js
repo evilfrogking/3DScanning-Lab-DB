@@ -13,10 +13,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Switch between ports for testing
-//const ASPEN_PORT = 3825;
-//const PORT = ASPEN_PORT;
-const ALEX_PORT = 8872;
-const PORT = ALEX_PORT;
+const ASPEN_PORT = 3825;
+const PORT = ASPEN_PORT;
+// const ALEX_PORT = 8872;
+// const PORT = ALEX_PORT;
 
 // Database
 const db = require('./database/db-connector');
@@ -148,7 +148,6 @@ app.get('/ScanPOCs', async function (req, res) {
     }
 });
 
-
 app.post('/Reset', async function (req, res) {
   try {
     await db.query('CALL sp_RestartDatabase()');
@@ -226,6 +225,44 @@ app.post('/CreateScanPOC', async function (req, res) {
         );
     }
 });
+
+// Citation for use of AI Tools:
+// Date: 03/09/2026
+// Prompts used to generate PL/SQL
+// Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
+// The SP takes in the following parameters: scanPOCID, scanID, pocID. 
+// The SP updates the ScanPOCs table with the provided scanID and 
+// pocID where the scanPOCID matches the provided scanPOCID.
+// Copilot wrote input validation as well.
+// AI Source URL: https://copilot.microsoft.com/
+// Citation for use of AI Tools:
+// Date: 03/09/2026
+// Prompts used to generate PL/SQL
+// Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
+// The SP takes in the following parameters: scanPOCID, scanID, pocID. 
+// The SP updates the ScanPOCs table with the provided scanID and 
+// pocID where the scanPOCID matches the provided scanPOCID. 
+// AI Source URL: https://copilot.microsoft.com/
+// Make sure (once, near your app setup) you can parse form bodies:
+// app.use(express.urlencoded({ extended: true }));
+app.post('/UpdateScanPOC', async (req, res) => {
+  try {
+    const scanPOCID = Number(req.body.update_scanPOC_id);
+    const newPocID  = Number(req.body.update_poc_ID);
+
+    await db.query('CALL sp_update_scanPOC(?, ?);', [
+      scanPOCID, newPocID
+    ]);
+
+    res.redirect('/ScanPOCs');
+  } catch (err) {
+    console.error('Error executing queries:', err);
+    console.log('POST /UpdateScanPOC body:', req.body);
+    res.status(500).send('An error occurred while executing the database queries.');
+  }
+});
+
+
 // ########################################
 // ########## LISTENER
 
