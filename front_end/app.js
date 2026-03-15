@@ -1,10 +1,11 @@
-// Authors: Aspen Frazee and Alex Hinson
-// File name: app.js
-// Templates used: Yes, the template provided in "Web Application Technology" was used and followed for the app.get process
-// https://canvas.oregonstate.edu/courses/2031764/pages/exploration-web-application-technology-2?module_item_id=26243419
-// Additionally, the template in "Implementing CUD operations in your app" was used and followed for the app.post process
-// https://canvas.oregonstate.edu/courses/2031764/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=26243436
-// AI used: N/A
+/*
+Authors: Aspen Frazee and Alex Hinson
+File name: app.js
+Templates used: Yes, the template provided in "Web Application Technology" was used and followed for the app.get process
+https://canvas.oregonstate.edu/courses/2031764/pages/exploration-web-application-technology-2?module_item_id=26243419
+Additionally, the template in "Implementing CUD operations in your app" was used and followed for the app.post process
+https://canvas.oregonstate.edu/courses/2031764/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=26243436
+*/
 // Express
 const express = require('express');
 const app = express();
@@ -40,9 +41,14 @@ app.get('/', async function (req, res) {
     }
 });
 
+/*  Citation for use of AI Tools:
+    Date: 03/13/2026
+    Prompt: How to make the reset button right-aligned to the navbar.
+            I want it to be on the right-side of the screen.
+    AI Source URL: https://copilot.microsoft.com/ */
 app.get('/3DScans', async function (req, res) {
     try {
-        const query1 = `SELECT 3DScans.scanID AS 'ID', 3DScans.scanDate AS 'Scan Date', 3DScans.fileName AS 'File Name', \
+        const query1 = `SELECT 3DScans.scanID AS 'ID', DATE_FORMAT(3DScans.scanDate, '%Y-%m-%d') AS 'Scan Date', 3DScans.fileName AS 'File Name', \
             Artifacts.artifactID AS 'Artifact ID', Technicians.techEmail AS 'Technician Contact', \
             PointsOfContact.pocEmail AS 'Lab Contact', 3DScans.units AS 'Units', 3DScans.scanMethod AS 'Scan Method', \
             3DScans.derived FROM 3DScans \
@@ -158,15 +164,15 @@ app.post('/Reset', async function (req, res) {
   }
 });
 
-
-// Citation for use of AI Tools:
-// Date: 03/02/2026
-// Prompts used to generate PL/SQL
-// Edit my delete function to work with my stored procedure sp_delete_scanPOC.
-// into the following schema [movies db schema here] and returns the id of the newly inserted title. 
-// Write a test to verify the SP by inserting the title for the 2001 comedy movie Shrek.
-// AI Source URL: https://copilot.microsoft.com/
-
+/*
+    Citation for use of AI Tools:
+    Date: 03/02/2026
+    Prompts used to generate PL/SQL
+        Edit my delete function to work with my stored procedure sp_delete_scanPOC.
+        into the following schema [movies db schema here] and returns the id of the newly inserted title. 
+        Write a test to verify the SP by inserting the title for the 2001 comedy movie Shrek.
+    AI Source URL: https://copilot.microsoft.com/
+*/
 app.post('/DeleteScanPOC', async function (req, res) {
   try {
     const scanPOCID = req.body.scanPOCID;
@@ -225,26 +231,15 @@ app.post('/CreateScanPOC', async function (req, res) {
         );
     }
 });
-
-// Citation for use of AI Tools:
-// Date: 03/09/2026
-// Prompts used to generate PL/SQL
-// Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
-// The SP takes in the following parameters: scanPOCID, scanID, pocID. 
-// The SP updates the ScanPOCs table with the provided scanID and 
-// pocID where the scanPOCID matches the provided scanPOCID.
-// Copilot wrote input validation as well.
-// AI Source URL: https://copilot.microsoft.com/
-// Citation for use of AI Tools:
-// Date: 03/09/2026
-// Prompts used to generate PL/SQL
-// Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
-// The SP takes in the following parameters: scanPOCID, scanID, pocID. 
-// The SP updates the ScanPOCs table with the provided scanID and 
-// pocID where the scanPOCID matches the provided scanPOCID. 
-// AI Source URL: https://copilot.microsoft.com/
-// Make sure (once, near your app setup) you can parse form bodies:
-// app.use(express.urlencoded({ extended: true }));
+/*
+Citation for use of AI Tools:
+Date: 03/09/2026
+Prompts used to generate PL/SQL
+Troubleshoot why my update function isn't working with my stored procedure sp_update_scanPOC. 
+The SP takes in the following parameters: scanPOCID, scanID, pocID. 
+The SP updates the ScanPOCs table with the provided scanID and 
+pocID where the scanPOCID matches the provided scanPOCID. 
+AI Source URL: https://copilot.microsoft.com/ */
 app.post('/UpdateScanPOC', async (req, res) => {
   try {
     const scanPOCID = Number(req.body.update_scanPOC_id);

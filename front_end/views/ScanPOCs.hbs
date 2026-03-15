@@ -1,3 +1,11 @@
+{{!--
+    File: ScanPOCs.hbs
+    Purpose: This file contains the Handlebars template for displaying artifact records.
+             Specifically, this is the intersection table between Points Of Contact and 3D Scans to highlight the M:M relationship between them.
+    Author: Aspen Frazee and Alexander Hinson
+    Created: 02-06-2026
+    Last Update: 03-13-2026 
+--}}
 <h1>Scan'douts List</h1>
 <div class="Description">
 <p>The intersection table between Points Of Contact and 3D Scans to highlight the M:M relationship between them.<br> 
@@ -41,7 +49,7 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
 
     <label for='create_scanpoc_POC'>Contact Point: </label>
     <select name='create_scanpoc_POC' id='create_scanpoc_POC' required>
-        <option value='' disable selected>Select a Point of Contact</option>
+        <option value='' disabled selected>Select a Point of Contact</option>
         {{#each pocs}}
         <option value='{{this.pocID}}' required>{{this.pocEmail}}</option>
         {{/each}}
@@ -49,7 +57,7 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
 
     <label for='create_scanpoc_3DScan'>Scan: </label>
     <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan' required>
-        <option value='' disable selected>Select a Scan</option>
+        <option value='' disabled selected>Select a Scan</option>
         {{#each scans}}
         <option value='{{this.scanID}}' required>{{this.fileName}}</option>
         {{/each}}
@@ -73,7 +81,7 @@ AI Source URL: https://copilot.microsoft.com/ --}}
     <option value='' selected>Select a Scan'dout</option>
     {{#each scancontacts}}
       <option value='{{this.ID}}'>
-        {{this.ID}} - {{this.[File]}} - loaned to - {{this.[Contact]}}
+        {{this.ID}} - {{this.File}} - loaned to - {{this.Contact}}
       </option>
     {{/each}}
   </select>
@@ -90,30 +98,3 @@ AI Source URL: https://copilot.microsoft.com/ --}}
 
   <input type='submit' />
 </form>
-
-<script>
-(() => {
-  const pkSel   = document.getElementById('update_scanPOC_id');
-  const scanSel = document.getElementById('update_scan_ID');
-  const pocSel  = document.getElementById('update_poc_ID');
-
-  function setDetailsEnabled(enabled) {
-    scanSel.disabled = !enabled;
-    pocSel.disabled  = !enabled;
-    if (!enabled) {
-      // optional: reset to placeholder if you want them blanked when disabled
-      scanSel.value = '';
-      pocSel.value  = '';
-    }
-  }
-
-  // Initial: locked until PK chosen
-  setDetailsEnabled(false);
-
-  // When PK changes, enable details if a real value is selected
-  pkSel.addEventListener('change', () => {
-    const hasPK = pkSel.value && pkSel.value !== '';
-    setDetailsEnabled(!!hasPK);
-  });
-})();
-</script>

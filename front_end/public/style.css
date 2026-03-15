@@ -1,17 +1,167 @@
-h1, h2 { margin-left: 16px;}
-table {border-collapse: collapse;margin-left: 32px;}
-th, td {
-    border: 1px solid #ddd;
-    padding: 12px;
-    text-align: center;
+/* 
+  File: style.css
+  Purpose: This file contains the CSS styling for the front-end of our project.
+  Author: Aspen Frazee and Alexander Hinson
+  Created: 02-06-2026
+  Last Update: 03-13-2026
+  Citation for use of AI Tools:
+  Date: 03/13/2026
+  Prompt: Provide a modern, clean CSS style for a web application that manages 3D scans of artifacts. 
+          The overall aesthetic should be professional yet inviting, suitable for an academic or museum context.
+  AI Source URL: https://copilot.microsoft.com/ 
+*/
+
+:root {
+  /* Base */
+  --bg: #f6f4ef;           /* parchment */
+  --surface: #ffffff;     /* cards */
+  --border: #e1ddd4;      /* stone */
+
+  /* Text */
+  --text: #2f2f2f;
+  --text-muted: #6b665e;
+
+  /* Accents */
+  --primary: #6b7f5f;     /* muted olive */
+  --nav-bg: #3f4a3c;      /* dark moss */
+  --danger: #8b3a2e;      /* oxidized clay */
 }
-th {background-color: #f2f2f2;}
-tr:nth-child(even) {background-color: #f9f9f9;}
-.cuForm { margin-left: 32px;}
-input, select { margin-bottom: 4px;margin-right: 12px;}
-/* Copilot query: [provided a screenshot of the navbar] How can I make the reset database button
-be to the right of the nav links? */
-nav {background-color: #cecece;padding: 16px; display: flex; align-items: center;}
-a {margin-left: 16px;}
-.Description {margin-left: 32px;}
-#restart_database_button {margin-left: 32px;}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--bg);
+  margin: 0;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 32px auto;
+  background-color: var(--surface);
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+.page > * + * {
+  margin-top: 28px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin: 24px 0 8px 0;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+h2 {
+  font-size: 1.4rem;
+  margin: 24px 0 8px 0;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+
+table {
+  border: 1px solid var(--border);
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden; 
+  width: 100%;
+  margin: 16px 0;
+}
+
+th {
+  background-color: #f0eee8;
+  text-align: left;
+  font-weight: 600;
+}
+
+th, td {
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid var(--border);
+
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+
+tr:hover {
+  background-color: #f2f5ef;
+}
+
+.cuForm label {
+  display: block;
+  font-weight: 500;
+  margin-top: 12px;
+}
+
+input, select {
+  background-color: #fbfaf7;
+  width: 240px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  height: 36px;
+  font-size: 0.95rem;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(107, 127, 95, 0.2);
+}
+
+nav {
+  background-color: var(--nav-bg);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  color: #f4f3ee;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  font-size: 0.95rem;
+  border-bottom: 3px solid #2e362c;
+}
+
+nav a {
+  color: #f4f3ee;
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+nav > div { display: flex; gap: 20px; }
+
+nav form {
+  margin-left: auto;
+}
+
+#restart_database_button {
+  background-color: var(--danger);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+#restart_database_button:hover {
+  background-color: #6f2e25;
+}
+
+
+#restart_database_button:active {
+  transform: scale(0.97);
+}
