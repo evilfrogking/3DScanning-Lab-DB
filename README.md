@@ -85,12 +85,12 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 - [ ] Zip folder organization  
 - [ ] Submit Project  
 ## Aspen
-- [ ] PDF  | 
-- [ ] Executive Summary  |   
-- [ ] Project and Database Outlines  |   
-- [ ] ER Diagram  | 
-- [ ] Schema  | 
-- [ ] Sample Data  | 
+- [ ] PDF  
+  - [ ] Executive Summary  
+  - [ ] Project and Database Outlines  
+  - [ ] ER Diagram  
+  - [ ] Schema  
+  - [ ] Sample Data  
 - [ ] Code  
 ## Alex
 - [ ] Data Definition Queries  
