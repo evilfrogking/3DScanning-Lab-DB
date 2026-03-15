@@ -82,17 +82,16 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 
 # To-Do List
 ## Aspen
-[ ] Executive Summary
-[ ] Project and Database Outlines
-[ ] ER Diagram
-[ ] Schema
-[ ] Code
+[] Executive Summary  
+[] Project and Database Outlines  
+[] ER Diagram  
+[] Schema  
+[] Code  
 ## Alex
-[ ] Data Definition Queries
-[ ] Data Manipulation Queries
-[ ] Procedure Language Queries
-[ ] Website Functionality
-[ ] Style
-[ ] UI Screen Shots with Informative Titles
-[ ] Sample Data
-
+[] Data Definition Queries  
+[] Data Manipulation Queries  
+[] Procedure Language Queries  
+[] Website Functionality  
+[] Style  
+[] UI Screen Shots with Informative Titles  
+[] Sample Data  
