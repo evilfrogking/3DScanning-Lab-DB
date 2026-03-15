@@ -79,3 +79,20 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 <br>**Relationship(s)**
 - A 1:M relationship between ScansPointsOfContact and 3DScans is implemented with scanID as a FK in ScansPointsOfContact. This intersection table will match scan IDs to point-of-contact IDs, so it needs each ID as a foreign key.
 - A 1:M relationship between ScansPointsOfContact and PointsOfContact is implemented with pocID as a FK in ScansPointsOfContact. This intersection table will match scan IDs to point-of-contact IDs, so it needs each ID as a foreign key.
+
+# To-Do List
+## Aspen
+[ ] Executive Summary
+[ ] Project and Database Outlines
+[ ] ER Diagram
+[ ] Schema
+[ ] Code
+## Alex
+[ ] Data Definition Queries
+[ ] Data Manipulation Queries
+[ ] Procedure Language Queries
+[ ] Website Functionality
+[ ] Style
+[ ] UI Screen Shots with Informative Titles
+[ ] Sample Data
+
