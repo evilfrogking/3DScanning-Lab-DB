@@ -144,8 +144,8 @@ BEGIN
         '222-543-6799',
         'Kings Landing'
     ),
-    -- No active boolean will be provided here to show the default value.
     (
+        1,
         'Tyrion', 'Lannister',
         'TLannister@houselannister.com',
         '222-345-6789',
