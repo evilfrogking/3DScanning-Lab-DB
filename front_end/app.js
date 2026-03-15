@@ -14,17 +14,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // Switch between ports for testing
-const ASPEN_PORT = 3825;
-const PORT = ASPEN_PORT;
-// const ALEX_PORT = 8872;
-// const PORT = ALEX_PORT;
+// const ASPEN_PORT = 3825;
+// const PORT = ASPEN_PORT;
+const ALEX_PORT = 8872;
+const PORT = ALEX_PORT;
 
 // Database
 const db = require('./database/db-connector');
 
 // Handlebars
-const { engine } = require('express-handlebars'); // Import express-handlebars engine
-app.engine('.hbs', engine({ extname: '.hbs' })); // Create instance of handlebars
+const { engine } = require('express-handlebars');
+
+app.engine('.hbs', engine({
+    defaultLayout: 'main',
+    extname: '.hbs',
+    helpers: {
+    // 03/15/2026 Added because of AI prompts regarding the update scandout page.
+    eq: (a, b) => a == b,
+    // 03/15/2026 Added because of AI prompts regarding displaying tinyints as bools.
+    bool: (value) => value == 1 ? "True" : "False"
+    } 
+})); // Create instance of handlebars
 app.set('view engine', '.hbs'); // Use handlebars engine for *.hbs files.
 
 // ########################################
@@ -136,7 +146,8 @@ app.get('/PointsOfContact', async function (req, res) {
 app.get('/ScanPOCs', async function (req, res) {
     try {
         const query1 = `SELECT ScanPOCs.scanPOCID AS 'ID', 3DScans.fileName AS 'File', \
-            PointsOfContact.pocEmail AS 'Contact' FROM ScanPOCs \
+            PointsOfContact.pocEmail AS 'Contact', \
+            CONCAT(PointsOfContact.pocFName, ' ', PointsOfContact.pocLName) AS 'Name' FROM ScanPOCs \
             LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID \
             LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;`;
         const query2 = 'SELECT * FROM 3DScans;';
@@ -199,6 +210,42 @@ app.post('/DeleteScanPOC', async function (req, res) {
     res.status(500).send('An error occured while executing the database queries.');
   }
 });
+
+/*Citation for use of AI Tools:
+Date: 03/15/2026
+There were alot of prompts that boiled down to wanting to move the create and update forms into their own
+pages, make the update form have a locked scanpocid field (since users shouldn't be able to edit a different 
+scanpoc from the "edit button" on one of them) followed by loads of troubleshooting.
+CREATE form
+AI Source URL: https://copilot.microsoft.com/*/
+app.get('/ScanPOCs/Create', async (req, res) => {
+  const [scans] = await db.query('SELECT * FROM 3DScans;');
+  const [pocs] = await db.query('SELECT * FROM PointsOfContact;');
+
+  res.render('ScanPOCs_Create', { scans, pocs });
+});
+
+app.get('/ScanPOCs/Update/:id', async (req, res) => {
+    const scanPOCID = req.params.id;
+
+    const [[scanpoc]] = await db.query(
+      `SELECT 
+          ScanPOCs.scanPOCID AS scanPOCID,
+          ScanPOCs.pocID AS pocID,
+          3DScans.fileName AS File,
+          PointsOfContact.pocEmail AS Contact
+       FROM ScanPOCs
+       LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID
+       LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID
+       WHERE ScanPOCs.scanPOCID = ?`,
+      [scanPOCID]
+    );
+
+    const [pocs] = await db.query('SELECT * FROM PointsOfContact;');
+
+    res.render('ScanPOCs_Update', { scanpoc, pocs });
+});
+
 
 // This functionality was provided as a template in the
 // "Implementing CUD operations in your app" exploration

@@ -165,3 +165,94 @@ nav form {
 #restart_database_button:active {
   transform: scale(0.97);
 }
+
+/*AI USAGE
+03/15/2026
+We prompted AI quite a few times to try to nail down the create, update, and delete buttons on the scandout table.
+https://copilot.microsoft.com/
+*/
+
+/* Generic button base */
+.btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+}
+
+/* Primary (Create) button */
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #5d6f53;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+/* Secondary (Update) button */
+.btn-secondary {
+  background-color: #dcd8cf;
+  color: var(--text);
+}
+
+.btn-secondary:hover {
+  background-color: #cfcac1;
+}
+
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+/* Danger (Delete) button */
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #6f2e25;
+}
+
+.btn-danger:active {
+  transform: scale(0.97);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px; /* space between Update and Delete */
+  align-items: center;
+}
+
+.btn-icon i {
+  font-size: 1rem;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+button.btn {
+  font-family: inherit;
+  font-size: inherit;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.05s ease;
+  border: none;
+}
+
+.btn-icon i {
+  font-size: 1rem;
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+}

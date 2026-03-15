@@ -17,12 +17,14 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
 <table>
   <thead>
     <tr>
-        {{#each scancontacts.[0]}}
+      {{! We had to switch to manual headers so that we could display two attributes 
+      under the same column without adding another unimportant unwanted column to the table}}
+        <th>ID</th>
+        <th>File Name</th>
+        <th>Contact</th>
         <th>
-            {{@key}}
+          <a href="/ScanPOCs/Create" class="btn btn-primary">+ New Scan'dout</a>
         </th>
-        {{/each}}
-      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -30,71 +32,31 @@ request a 3D scan file as a loan. These are also called scan handouts, or: scan'
       <tr>
         <td>{{this.ID}}</td>
         <td>{{this.File}}</td>
-        <td>{{this.Contact}}</td>
-
         <td>
-          <form method="POST" action="/DeleteScanPOC">
-            <input type="hidden" name="scanPOCID" value="{{this.ID}}">
-            <input type="submit" value="Delete">
-          </form>
+          {{this.Name}}<br>
+          <span style="color: var(--text-muted); font-size: 0.9rem;">
+          {{this.Contact}}
+          </span>
         </td>
+        <td>
+          <div class="action-buttons">
+
+            <a href="/ScanPOCs/Update/{{this.ID}}" class="btn btn-secondary btn-icon">
+              <i class="bi bi-pencil"></i>
+            </a>
+
+            <form method="POST" action="/DeleteScanPOC" style="display:inline;">
+              <input type="hidden" name="scanPOCID" value="{{this.ID}}">
+              <button type="submit" class="btn btn-danger btn-icon">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+
+          </div>
+        </td>
+
+
       </tr>
     {{/each}}
   </tbody>
 </table>
-
-{{! CREATE form }}
-<h2>Register a Scan'dout</h2>
-<form class='cuForm' id='create_scanpoc_form' method="POST" action="/CreateScanPOC">
-
-    <label for='create_scanpoc_POC'>Contact Point: </label>
-    <select name='create_scanpoc_POC' id='create_scanpoc_POC' required>
-        <option value='' disabled selected>Select a Point of Contact</option>
-        {{#each pocs}}
-        <option value='{{this.pocID}}' required>{{this.pocEmail}}</option>
-        {{/each}}
-    </select>
-
-    <label for='create_scanpoc_3DScan'>Scan: </label>
-    <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan' required>
-        <option value='' disabled selected>Select a Scan</option>
-        {{#each scans}}
-        <option value='{{this.scanID}}' required>{{this.fileName}}</option>
-        {{/each}}
-    </select>
-
-    <input type='submit' />
-</form>
-
-{{!-- Citation for use of AI Tools:
-Date: 03/09/2026
-Prompt: Please write input validation so users to be able to chose the PK, 
-then select a new POC and that locks the files, 
-or a new file and that locks the POC. I also want a way for the users to deselect their options.
-Degree of origionality: This code has been heavily modified by Copilot, including all of the error handling 
-and updated form logic.
-AI Source URL: https://copilot.microsoft.com/ --}}
-<h2>Update a Scan'dout</h2>
-<form class='cuForm' id='update_scanPOC_form' method='POST' action='/UpdateScanPOC'>
-  <label for='update_scanPOC_id'>Scan'dout to Update: </label>
-  <select name='update_scanPOC_id' id='update_scanPOC_id' required>
-    <option value='' selected>Select a Scan'dout</option>
-    {{#each scancontacts}}
-      <option value='{{this.ID}}'>
-        {{this.ID}} - {{this.File}} - loaned to - {{this.Contact}}
-      </option>
-    {{/each}}
-  </select>
-
-  <label for='update_poc_ID'>POC: </label>
-  <select name='update_poc_ID' id='update_poc_ID' required>
-    <option value='' selected>Select a POC</option>
-    {{#each pocs}}
-      <option value='{{this.pocID}}' required>
-        {{this.pocFName}} {{this.pocLName}} - {{this.pocEmail}}
-      </option>
-    {{/each}}
-  </select>
-
-  <input type='submit' />
-</form>
