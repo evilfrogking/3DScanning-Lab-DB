@@ -83,7 +83,8 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 # To-Do List
 - [ ] Code folder organization
 - [ ] Zip folder organization  
-- [ ] Submit Project  
+- [ ] Submit Project
+- [ ] UI Screen Shots with Informative Titles  
 ## Aspen
 - [ ] PDF  
   - [ ] Executive Summary  
@@ -98,4 +99,3 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 - [ ] Procedure Language Queries  
 - [ ] Website Functionality  
 - [ ] Style  
-- [ ] UI Screen Shots with Informative Titles  
