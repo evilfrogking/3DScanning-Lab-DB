@@ -14,7 +14,7 @@
 :root {
   /* Base */
   --bg: #f6f4ef;           /* parchment */
-  --surface: #ffffffc4;     /* cards */
+   --surface: #ffffffc4;     /* cards */
   --border: #e1ddd4;      /* stone */
 
   /* Text */
@@ -30,6 +30,10 @@
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background-color: var(--bg);
+  background-image: url("feline_skull_3D.png");
+  background-repeat: no-repeat;
+  background-position: center 20%;
+  background-size: cover;
   margin: 0;
   color: var(--text);
   line-height: 1.5;
@@ -38,11 +42,7 @@ body {
 .page {
   max-width: 1100px;
   margin: 32px auto;
-  background-color: var(--bg);
-  background-image: url("feline_skull_3D.png");
-  background-repeat: no-repeat;
-  background-position: center 20%;
-  background-size: cover;
+  background-color: var(--surface);
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -172,8 +172,6 @@ nav form {
 
 /*AI USAGE
 03/15/2026
-For everything regarding btn, AI was consulted. Though it was two different conversations, one for the buttons themselves,
-and one for the icons on the buttons.
 We prompted AI quite a few times to try to nail down the create, update, and delete buttons on the scandout table.
 https://copilot.microsoft.com/
 */
