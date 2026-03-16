@@ -100,7 +100,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 [Canvas](https://canvas.oregonstate.edu/courses/2031764/pages/exploration-web-application-technology-2?module_item_id=26243419)
 - Week 8 - DB Performance and Query Optimization + Project Development
 [Canvas](https://canvas.oregonstate.edu/courses/2031764/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=26243436)
-> Additional files
+> Additional files  
 Copilot, GitHub Copilot, and ChatGPT were used for code implementation, design, troubleshooting, and improvement throughout this codebase, and AI use is clearly marked with citations.
 
 # To-Do List
