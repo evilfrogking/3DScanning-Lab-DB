@@ -86,7 +86,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 - [ ] Zip folder organization  
 - [ ] Submit Project
 ## Aspen
-- [ ] PDF  
+- [x] PDF  
   - [x] Executive Summary  
   - [x] Project and Database Outlines  
   - [x] ER Diagram  
