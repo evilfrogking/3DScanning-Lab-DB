@@ -14,7 +14,7 @@
 :root {
   /* Base */
   --bg: #f6f4ef;           /* parchment */
-  --surface: #ffffff;     /* cards */
+  --surface: #ffffffc4;     /* cards */
   --border: #e1ddd4;      /* stone */
 
   /* Text */
@@ -38,7 +38,11 @@ body {
 .page {
   max-width: 1100px;
   margin: 32px auto;
-  background-color: var(--surface);
+  background-color: var(--bg);
+  background-image: url("feline_skull_3D.png");
+  background-repeat: no-repeat;
+  background-position: center 20%;
+  background-size: cover;
   padding: 24px;
   border: 1px solid var(--border);
   border-radius: 10px;
