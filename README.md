@@ -90,7 +90,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 ## Aspen
 - [ ] PDF  
   - [ ] Executive Summary  
-  - [ ] Project and Database Outlines  
+  - [x] Project and Database Outlines  
   - [x] ER Diagram  
   - [ ] Schema  
   - [ ] Sample Data  
