@@ -81,7 +81,6 @@ CREATE TABLE ScanPOCs (
 );
 
 SET foreign_key_checks=1; -- Moved to after the drops by Copilot recommendation
-START TRANSACTION; -- Copilot recommendation: "Put DML in a transaction; DDL has already committed"
 -- ==================
 -- INSERT DEFINITIONS
 -- ==================
