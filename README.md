@@ -91,16 +91,16 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
   - [ ] Executive Summary  
   - [x] Project and Database Outlines  
   - [x] ER Diagram  
-  - [ ] Schema  
   - [ ] Sample Data  
 - [ ] Code  
 ## Alex
-- [ ] UI Screen Shots with Informative Titles  
-- [ ] Data Definition Queries  
+- [ ] UI Screen Shots with Informative Titles
+- [x] Schema  
+- [x] Data Definition Queries  
 - [x] Data Manipulation Queries  
-- [ ] Procedure Language Queries  
+- [x] Procedure Language Queries  
 - [x] Website Functionality  
-- [ ] Style
+- [x] Style
   - [x] Icon buttons
   - [x] Booleans as True/False
   - [x] Update form page
