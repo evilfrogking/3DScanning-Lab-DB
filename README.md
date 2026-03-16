@@ -97,7 +97,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 ## Alex
 - [ ] UI Screen Shots with Informative Titles  
 - [ ] Data Definition Queries  
-- [ ] Data Manipulation Queries  
+- [x] Data Manipulation Queries  
 - [ ] Procedure Language Queries  
 - [x] Website Functionality  
 - [ ] Style
