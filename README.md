@@ -8,6 +8,34 @@
 **HTML, CSS, JavaScript, MySQL, Node**  
 MariaDB MySQL was used for database development. MySQL Workbench, PHPAdmin, and Draw.io were used for ERDs, Schemas, and tables. Node was used to implement the web app.  
 
+# Codebase Map
+3D Scanning Database  
+  ├── back_end
+  │    ├── DDl.sql  
+  │    └── DML.sql  
+  ├── front_end  
+  │    ├── database  
+  │    │    ├── db-connector.js  
+  │    │    └── plsql.sql  
+  │    ├── public  
+  │    │    ├── feline_skull_3D.png  
+  │    │    └── style.css  
+  │    ├── views  
+  │    │    ├── layouts  
+  │    │    │    └── main.hbs  
+  │    │    ├── 3DScans.hbs  
+  │    │    ├── Artifacts.hbs  
+  │    │    ├── home.hbs  
+  │    │    ├── PointsOfContact.hbs  
+  │    │    ├── ScanPOCs.hbs  
+  │    │    ├── ScanPOCs_Create.hbs  
+  │    │    ├── ScanPOCs_Update.hbs  
+  │    │    └── Technicians.hbs  
+  │    ├── app.js  
+  │    ├── package.json  
+  │    └── package-lock.json  
+  └──README.md  
+
 # 3D Artifacts Database
 ## Overview
 OSU has recently established a 3D Scanning lab for archaeology students and is using a collection of five hundred artifacts to train students in 3D Scanning. Once trained, Nyers [1] will use the technicians to catalog artifacts for several departments, enabling 3D scans for Ecampus students, other departments, and eventually outside institutions, vastly increasing the scope of the project to several thousand artifacts, a dozen technicians, and dozens of points of contact. Points of contact represent both individuals who provide artifacts for scanning and maintain ownership of those items and representatives of institutions interested in using the available 3D scans produced by the lab. While the new lab is being built, the ability to scan additional items is halted. Thus, the database can connect preexisting points of contact to preexisting scans, or update an existing connection between a scan and a point of contact, but nothing else.
