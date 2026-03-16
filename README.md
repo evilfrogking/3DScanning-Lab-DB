@@ -2,6 +2,7 @@
 > CS 340: Databases
 ---  
 [Web interface](http://classwork.engr.oregonstate.edu:3825/)
+[Project GitHub](https://github.com/evilfrogking/3DScanning-Lab-DB/tree/main)
 ---  
 # Tools used
 **HTML, CSS, JavaScript, MySQL, Node**  
