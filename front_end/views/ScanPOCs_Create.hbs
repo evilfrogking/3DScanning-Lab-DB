@@ -1,0 +1,28 @@
+<h1>Create a Scan'dout</h1>
+{{!Citation for use of AI Tools:
+Date: 03/15/2026
+There were alot of prompts that boiled down to wanting to move the create and update forms into their own
+pages, make the update form have a locked scanpocid field (since users shouldn't be able to edit a different 
+scanpoc from the "edit button" on one of them) followed by loads of troubleshooting.
+CREATE form
+AI Source URL: https://copilot.microsoft.com/ }}
+<form class='cuForm' method="POST" action="/CreateScanPOC">
+
+    <label for='create_scanpoc_3DScan'>Scan: </label>
+    <select name='create_scanpoc_3DScan' id='create_scanpoc_3DScan' required>
+        <option value='' disabled selected>Select a Scan</option>
+        {{#each scans}}
+        <option value='{{this.scanID}}' required>{{this.fileName}}</option>
+        {{/each}}
+    </select>
+
+    <label for='create_scanpoc_POC'>Contact Point: </label>
+    <select name='create_scanpoc_POC' id='create_scanpoc_POC' required>
+        <option value='' disabled selected>Select a Point of Contact</option>
+        {{#each pocs}}
+        <option value='{{this.pocID}}' required>{{this.pocEmail}}</option>
+        {{/each}}
+    </select>
+
+    <input type='submit' />
+</form>

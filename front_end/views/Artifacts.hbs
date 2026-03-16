@@ -3,7 +3,9 @@
     Purpose: This file contains the Handlebars template for displaying artifact records.
     Author: Aspen Frazee and Alexander Hinson
     Created: 02-06-2026
-    Last Update: 03-13-2026 
+    Last Update: 03-15-2026
+    AI USAGE:
+    Ai was used to help display the tinyint as a boolean. 
 --}}
 
 <h1>Artifacts</h1>
@@ -41,8 +43,8 @@
             <td>{{this.[IP Holder]}}</td>
             <td>{{this.License}}</td>
             <td>{{this.Classification}}</td>
-            <td>{{this.Cultural}}</td>
-            <td>{{this.Archaeological}}</td>
+            <td>{{bool this.Cultural}}</td>
+            <td>{{bool this.Archaeological}}</td>
         </tr>
         {{/each}}
     </tbody>
