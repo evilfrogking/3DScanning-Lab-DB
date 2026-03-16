@@ -38,7 +38,7 @@ SELECT * FROM Artifacts;
 SELECT Artifacts.artifactID AS 'ID', 
        Artifacts.pocID AS 'Contact Email', 
        Artifacts.onSite AS 'On Site', 
-       Artifacts.institutionalID AS 'Institutional ID', 
+       Artifacts.institutionID AS 'Institution ID', 
        Artifacts.location AS 'Location', 
        Artifacts.ipHolder AS 'IP Holder', 
        Artifacts.license AS 'License', 
@@ -77,8 +77,9 @@ SELECT pocID AS 'ID',
 -- ======================
 -- READ the Scan points of contact information
 SELECT ScanPOCs.scanPOCID AS 'ID', 
-       3DScans.fileName AS 'Scan File', 
-       PointsOfContact.pocEmail AS 'Contact Email' 
+       3DScans.fileName AS 'File', 
+       PointsOfContact.pocEmail AS 'Contact'
+       CONCAT (PointsOfContact.pocFName, ' ', PointsOfContact.pocLName) AS 'Name'
     FROM ScanPOCs 
     LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID 
     LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID;
@@ -89,13 +90,25 @@ SELECT * FROM PointsOfContact;
 
 -- INSERT ScanPOCs
 -- Associate a 3DScan with a Point of Contact (M-to-M relationship addition)
+-- Select statements to populate the dropdowns
+SELECT * FROM 3DScans;
+SELECT * From PointsOfContact
+-- Insert statement in the PLSQL
 INSERT INTO ScanPOCs (pocID, scanID) 
     VALUES (:pocIDInput, :scanIDInput);
 
 -- UPDATE ScanPOCS 
--- READ the ScanPOCIDs and the POC emails to populate the ScanPOCs dropdown
-SELECT scanPOCID, pocID
-    FROM ScanPOCs;
+-- Select statement to populate the update form page with the information
+-- Very similar to just the normal ScanPOCs page since they need the same info
+SELECT 
+    ScanPOCs.scanPOCID AS scanPOCID,
+    ScanPOCs.pocID AS pocID,
+    3DScans.fileName AS File,
+    PointsOfContact.pocEmail AS Contact
+    FROM ScanPOCs
+    LEFT JOIN 3DScans ON ScanPOCs.scanID = 3DScans.scanID
+    LEFT JOIN PointsOfContact ON ScanPOCs.pocID = PointsOfContact.pocID
+    WHERE ScanPOCs.scanPOCID = :scanPOCToEdit;
 -- READ the POC ID, first names, last names and the POC emails to populate the POC dropdown
 SELECT pocID, pocFName, pocLName, pocEmail FROM PointsOfContact;
 -- UPDATE ScanPOCs data based on submission of the Update a ScanPOCs form

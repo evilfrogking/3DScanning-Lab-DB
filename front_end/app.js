@@ -94,7 +94,7 @@ app.get('/Artifacts', async function (req, res) {
     try {
         // Create and execute our queries
         const query1 = `SELECT Artifacts.artifactID AS 'ID', PointsOfContact.pocEmail AS 'Contact Email', Artifacts.onSite AS 'On Site', \
-            Artifacts.institutionalID AS 'Institutional ID', Artifacts.location AS 'Location', \
+            Artifacts.institutionID AS 'Institution ID', Artifacts.location AS 'Location', \
             Artifacts.ipHolder AS 'IP Holder', Artifacts.license AS 'License', Artifacts.classification AS 'Classification', \
             Artifacts.cultural AS 'Cultural', Artifacts.archaeology AS 'Archaeological' FROM Artifacts \
             LEFT JOIN PointsOfContact ON Artifacts.pocID = PointsOfContact.pocID;`;

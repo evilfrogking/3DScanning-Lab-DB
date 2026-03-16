@@ -42,7 +42,7 @@ CREATE TABLE Artifacts (
     artifactID INT(11) AUTO_INCREMENT NOT NULL UNIQUE PRIMARY KEY,
     pocID  INT(11) NOT NULL,
     onSite BOOLEAN NOT NULL DEFAULT TRUE,
-    institutionalID VARCHAR(101),
+    institutionID VARCHAR(101),
     location VARCHAR(50) NOT NULL,
     ipHolder VARCHAR(50),
     license VARCHAR(50),
@@ -126,7 +126,7 @@ VALUES
 INSERT INTO Artifacts (
     pocID,
     onSite,
-    institutionalID,
+    institutionID,
     location,
     ipHolder,
     license,
