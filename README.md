@@ -94,7 +94,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
   - [ ] Sample Data  
 - [ ] Code  
 ## Alex
-- [ ] UI Screen Shots with Informative Titles
+- [x] UI Screen Shots with Informative Titles
 - [x] Schema  
 - [x] Data Definition Queries  
 - [x] Data Manipulation Queries  
