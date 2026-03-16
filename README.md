@@ -99,7 +99,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 - [ ] Data Definition Queries  
 - [ ] Data Manipulation Queries  
 - [ ] Procedure Language Queries  
-- [ ] Website Functionality  
+- [x] Website Functionality  
 - [ ] Style
   - [x] Icon buttons
   - [x] Booleans as True/False
