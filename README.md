@@ -1,5 +1,10 @@
 # 3DScanning-Lab-DB
 > CS 340: Databases
+> [Web interface](http://classwork.engr.oregonstate.edu:3825/)
+
+# Tools used
+**HTML, CSS, JavaScript, MySQL, Node**  
+MariaDB MySQL was used for database development. MySQL Workbench, PHPAdmin, and Draw.io were used for ERDs, Schemas, and tables. Node was used to implement the web app.  
 
 # 3D Artifacts Database
 ## Overview
@@ -81,6 +86,21 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
 #### Relationship(s)
 - A 1:M relationship between ScansPointsOfContact and 3DScans is implemented with scanID as a FK in ScansPointsOfContact. This intersection table will match scan IDs to point-of-contact IDs, so it needs each ID as a foreign key.
 - A 1:M relationship between ScansPointsOfContact and PointsOfContact is implemented with pocID as a FK in ScansPointsOfContact. This intersection table will match scan IDs to point-of-contact IDs, so it needs each ID as a foreign key.
+
+# Citations
+> The code was informed, styled after, or co-written by the following sources:
+## Project design
+[1]	A. Nyers, interview, Jan. 2026.
+[2]	A. Nyers, (2026). Using Excel cells as attributes for artifacts and 3D scans.metadata [Excel spreadsheet]. Available: [Canvas](https://canvas.oregonstate.edu/courses/2055205/files/115980248?module_item_id=26476308)
+## Code implementation
+> File name: app.js
+**From OSU's Professor Curry's CS340 2026 course**
+- Week 6 Building Your Project UI
+[Canvas](https://canvas.oregonstate.edu/courses/2031764/pages/exploration-web-application-technology-2?module_item_id=26243419)
+- Week 8 - DB Performance and Query Optimization + Project Development
+[Canvas](https://canvas.oregonstate.edu/courses/2031764/pages/exploration-implementing-cud-operations-in-your-app?module_item_id=26243436)
+> Additional files
+Copilot, GitHub Copilot, and ChatGPT were used for code implementation, design, troubleshooting, and improvement throughout this codebase, and AI use is clearly marked with citations.
 
 # To-Do List
 - [ ] Zip folder organization  
