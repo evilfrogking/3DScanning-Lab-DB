@@ -1,7 +1,8 @@
 # 3DScanning-Lab-DB
 > CS 340: Databases
-> [Web interface](http://classwork.engr.oregonstate.edu:3825/)
-
+---  
+[Web interface](http://classwork.engr.oregonstate.edu:3825/)
+---  
 # Tools used
 **HTML, CSS, JavaScript, MySQL, Node**  
 MariaDB MySQL was used for database development. MySQL Workbench, PHPAdmin, and Draw.io were used for ERDs, Schemas, and tables. Node was used to implement the web app.  
