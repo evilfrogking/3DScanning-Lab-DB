@@ -8,7 +8,7 @@ Nyers [1] of OSU's 3D scanning lab uses an artifact collection of around 500 ite
 ## Database Outline
 ### Artifacts
 Records details of the physical objects that are 3D-scanned, including all potentially relevant research information [2].  
-### Attributes  
+#### Attributes  
 1. artifactID: INT, AUTO_INCREMENT, UNIQUE, not NULL, PK
 2. pocID: INT, not NULL, FK
 3. onSite: BOOLEAN, not NULL DEFAULT TRUE
@@ -20,13 +20,13 @@ Records details of the physical objects that are 3D-scanned, including all poten
 9. cultural: BOOLEAN, not NULL DEFAULT FALSE
 10. archaeology: BOOLEAN, not NULL DEFAULT FALSE
 
-### Relationship(s)  
+#### Relationship(s)  
 - A 1:M relationship between Artifacts and 3DScans is implemented with artifactID as a FK in 3DScans. All 3D scans must correspond to their original artifacts, while artifacts do not need 3D scans to be catalogued.
 - A 1:M relationship between PointsOfContact and Artifacts is implemented with pocID as a FK in artifacts. All artifacts need to be catalogued with a point of contact, but points of contact do not need artifacts to be included in the database.
 
 ### 3DScans
 Records the details of the 3D scans, including all potentially relevant research information [2].
-### Attributes  
+#### Attributes  
 1. scanID: INT, AUTO_INCREMENT, UNIQUE, not NULL, PK
 2. artifactID: INT, not NULL, FK
 3. labPOCID: INT, not NULL, FK; the point of contact for the 3D scanning lab.
