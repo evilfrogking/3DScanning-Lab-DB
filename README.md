@@ -10,7 +10,7 @@ MariaDB MySQL was used for database development. MySQL Workbench, PHPAdmin, and 
 
 # Codebase Map
 3D Scanning Database  
-  ├── back_end
+  ├── back_end  
   │    ├── DDl.sql  
   │    └── DML.sql  
   ├── front_end  
