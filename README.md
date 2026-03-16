@@ -91,7 +91,7 @@ The intersection table between PointsOfContact and 3DScans to highlight the M:M 
   - [ ] Executive Summary  
   - [x] Project and Database Outlines  
   - [x] ER Diagram  
-  - [ ] Sample Data  
+  - [x] Sample Data  
 - [ ] Code  
 ## Alex
 - [x] UI Screen Shots with Informative Titles
