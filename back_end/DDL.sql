@@ -126,7 +126,7 @@ VALUES
 INSERT INTO Artifacts (
     pocID,
     onSite,
-    institutionalID,
+    institutionID,
     location,
     ipHolder,
     license,
