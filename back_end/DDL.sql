@@ -9,7 +9,6 @@
 */
 
 SET foreign_key_checks=0;
-SET autocommit = 0;
 DROP TABLE IF EXISTS ScanPOCs;
 DROP TABLE IF EXISTS 3DScans;
 DROP TABLE IF EXISTS Artifacts;
