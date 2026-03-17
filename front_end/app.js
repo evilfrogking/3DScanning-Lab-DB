@@ -22,6 +22,11 @@ const PORT = ALEX_PORT;
 // Database
 const db = require('./database/db-connector');
 
+/*Citation for use of AI Tools:
+Date: 03/15/2026
+There were alot of prompts that boiled down to wanting to move the create and update forms into their own
+pages and have just a generally cleaner output for our website. the changed to the hbs were a part of that.
+AI Source URL: https://copilot.microsoft.com/*/
 // Handlebars
 const { engine } = require('express-handlebars');
 
@@ -225,6 +230,13 @@ app.get('/ScanPOCs/Create', async (req, res) => {
   res.render('ScanPOCs_Create', { scans, pocs });
 });
 
+/*Citation for use of AI Tools:
+Date: 03/15/2026
+There were alot of prompts that boiled down to wanting to move the create and update forms into their own
+pages, make the update form have a locked scanpocid field (since users shouldn't be able to edit a different 
+scanpoc from the "edit button" on one of them) followed by loads of troubleshooting.
+CREATE form
+AI Source URL: https://copilot.microsoft.com/*/
 app.get('/ScanPOCs/Update/:id', async (req, res) => {
     const scanPOCID = req.params.id;
 
