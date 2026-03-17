@@ -81,6 +81,7 @@ CREATE TABLE ScanPOCs (
     ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+SET foreign_key_checks=1; -- Moved to after the drops by Copilot recommendation
 -- ==================
 -- INSERT DEFINITIONS
 -- ==================
@@ -114,19 +115,18 @@ VALUES
     '222-543-6799',
     'Kings Landing'
 ),
--- No active boolean will be provided here to show the default value
 (
+    1,
     'Tyrion', 'Lannister',
     'TLannister@houselannister.com',
     '222-345-6789',
     'All around Westeros'
 );
 
-
 INSERT INTO Artifacts (
     pocID,
     onSite,
-    institutionID,
+    institutionalID,
     location,
     ipHolder,
     license,
@@ -136,39 +136,36 @@ INSERT INTO Artifacts (
 VALUES
 (
     (SELECT pocID FROM PointsOfContact 
-        WHERE pocFName = 'Jaime' AND 
-        pocLName = 'Lannister'),
+        WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
     1,
-    NULL,
+    'Felis concolor',
     '3D Scanning Lab',
     'Pacific Slope Archaeological Laboratory',
     'CC BY-NC-SA 4.0',
-    'Groundstone',
-    1, 1
+    'Osteological',
+    0, 1
 ),
 (
     (SELECT pocID FROM PointsOfContact 
-        WHERE pocFName = 'Cersei' AND 
-        pocLName = 'Lannister'),
+        WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
     1,
     'CS191',
     '3D Scanning Lab',
     'Pacific Slope Archaeological Laboratory',
     'CC BY-NC-SA 4.0',
-    'Vertebra',
+    'Osteological',
     0, 0
 ),
 (
     (SELECT pocID FROM PointsOfContact 
-        WHERE pocFName = 'Cersei' AND 
-        pocLName = 'Lannister'),
+        WHERE pocFName = 'Cersei' AND pocLName = 'Lannister'),
     0,
     NULL,
     'N/a',
     'Archaeomodels',
     'CC BY-SA',
-    'Bifacial',
-    1, 0
+    'Biface',
+    1, 1
 );
 
 INSERT INTO Technicians (
@@ -185,18 +182,17 @@ VALUES
 (
     'Arya', 'Stark',
     'AStark@housestark.com',
-    '111-223-3334'
+    '123-223-3334'
 ),
--- This technician will exist without a 3dScan, emphasizing that a 3dScan for a technician is optional
 (
     'Sansa', 'Stark',
     'SStark@housestark.com',
-    '111-233-3344'
+    '321-233-3344'
 );
 
 INSERT INTO 3DScans (
-    artifactID,
     labPOCID,
+    artifactID,
     techID,
     scanDate,
     scanMethod,
@@ -205,22 +201,22 @@ INSERT INTO 3DScans (
 )
 VALUES
 (
-    (SELECT artifactID FROM Artifacts 
-        WHERE artifactID = 1),
     (SELECT pocID FROM PointsOfContact 
         WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+    (SELECT artifactID FROM Artifacts 
+        WHERE artifactID = 1),
     (SELECT techID FROM Technicians 
         WHERE techFName = 'Jon' AND techLName = 'Snow'),
     '20260106',
     'Structured Light',
     0,
-    'Scan_1_Cobble_No_Text.stl'
+    'feline_skull.obj'
 ),
 (
-    (SELECT artifactID FROM Artifacts 
-        WHERE artifactID = 2),
     (SELECT pocID FROM PointsOfContact 
         WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+    (SELECT artifactID FROM Artifacts 
+        WHERE artifactID = 2),
     (SELECT techID FROM Technicians 
         WHERE techFName = 'Jon' AND techLName = 'Snow'),
     '20260113',
@@ -229,16 +225,16 @@ VALUES
     'vertebra_text.obj'
 ),
 (
-    (SELECT artifactID FROM Artifacts 
-        WHERE artifactID = 2),
     (SELECT pocID FROM PointsOfContact 
         WHERE pocFName = 'Samwell' AND pocLName = 'Tarly'),
+    (SELECT artifactID FROM Artifacts 
+        WHERE artifactID = 2),
     (SELECT techID FROM Technicians 
         WHERE techFName = 'Arya' AND techLName = 'Stark'),
     '20260113',
     'Structured Light',
-    0,
-    'vertebra_no_text.obj'
+    1,
+    'obsidian_biface.ply'
 );
 
 INSERT INTO ScanPOCs (
@@ -250,13 +246,13 @@ VALUES
     (SELECT pocID FROM PointsOfContact 
         WHERE pocFName = 'Jaime' AND pocLName = 'Lannister'),
     (SELECT scanID FROM 3DScans 
-        WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
+    WHERE fileName = 'feline_skull.obj')
 ),
 (
     (SELECT pocID FROM PointsOfContact 
         WHERE pocFName = 'Tyrion' AND pocLName = 'Lannister'),
     (SELECT scanID FROM 3DScans 
-        WHERE fileName = 'Scan_1_Cobble_No_Text.stl')
+        WHERE fileName = 'feline_skull.obj')
 ),
 (
     (SELECT pocID FROM PointsOfContact 
@@ -265,5 +261,4 @@ VALUES
         WHERE fileName = 'vertebra_text.obj')
 );
 
-SET foreign_key_checks=1;
 COMMIT;
